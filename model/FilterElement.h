@@ -19,15 +19,13 @@
 #ifndef FILTER_ELEMENT_H
 #define FILTER_ELEMENT_H
 
-#include "ns3/application.h"
 #include "ns3/event-id.h"
+#include "ns3/object.h"
+#include "ns3/packet.h"
 #include "ns3/ptr.h"
-#include "ns3/ipv4-address.h"
 #include "ns3/traced-callback.h"
 
 namespace ns3 {
-
-class Packet;
 
 /**
  * \ingroup filterelement
@@ -50,7 +48,7 @@ public:
   /**
    * \brief Does the packet match the filter
    */
-  virtual bool Match (Ptr<ns3::Packet> packet);
+  virtual bool Match (Ptr<ns3::Packet> packet) = 0;
  
 };
 
