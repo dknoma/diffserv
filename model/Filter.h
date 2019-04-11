@@ -49,6 +49,7 @@ public:
   virtual ~Filter ();
 
   bool Match(Ptr<ns3::Packet> packet);
+  void SetElements(std::vector<FilterElement*> filterElements);
 
 };
 

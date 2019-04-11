@@ -68,8 +68,20 @@ DestinationIPAddressFilter::Match (Ptr<ns3::Packet> packet)
 {
   NS_LOG_FUNCTION (this << packet);
   std::cout << "THIS IS A SOURCE IP ADDRESS FILTER ELEMENT\n";
+  if (packet->GetSize() == 0)
+  {
+    std::cout << "empty packet...\n";
+    return false;
+  }
   Ipv4Header header;
+  std::cout << "peeking header...\n";
   packet->PeekHeader(header); // Get the IPv4 header from the packet
+  // if (header)
+  // {
+  //   std::cout << "header was null\n";
+  //   return false;
+  // }
+  std::cout << "checking address...\n";
   Ipv4Address srcAddress = header.GetDestination();
   std::cout << "src: " << srcAddress << "\n";
   return srcAddress == value;

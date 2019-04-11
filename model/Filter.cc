@@ -60,7 +60,6 @@ Filter::Filter ()
 
 Filter::~Filter()
 {
-
   NS_LOG_FUNCTION (this);
 }
 
@@ -74,8 +73,16 @@ Filter::Match (Ptr<ns3::Packet> packet)
   // for (std::vector<FilterElement*>::iterator i = elements.begin(); i != elements.end(); ++i)
   for(uint32_t i = 0; i < elements.size(); i++)
   {
+    std::cout << "filter element[" << i << "]\n";
     matching = elements.at(i) -> Match(packet);
   }
   return matching;
+}
+
+void
+Filter::SetElements(std::vector<FilterElement*> filterElements)
+{
+  NS_LOG_FUNCTION (this);
+  elements = filterElements;
 }
 } // Namespace ns3
