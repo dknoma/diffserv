@@ -13,7 +13,10 @@ def build(bld):
         'model/Filter.cc',
         'model/FilterElement.cc',
         'model/diffserv.cc',
+        'model/trafficclass.cc',
         'model/queuemode.cc',
+        'model/spq.cc',
+        'model/drr.cc',
         'helper/project2-helper.cc',
         ]
 
@@ -29,7 +32,10 @@ def build(bld):
         'model/Filter.h',
         'model/FilterElement.h',
         'model/diffserv.h',
+        'model/trafficclass.h',
         'model/queuemode.h',
+        'model/spq.h',
+        'model/drr.h',
         'model/FilterElement.h',
         'model/FilterElement.h',
         ]

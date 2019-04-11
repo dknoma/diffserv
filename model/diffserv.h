@@ -4,6 +4,7 @@
 
 #include <cstring>
 #include "queuemode.h"
+#include "trafficclass.h"
 #include "ns3/packet.h"
 #include "ns3/traced-callback.h"
 #include "ns3/nstime.h"

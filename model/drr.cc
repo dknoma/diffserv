@@ -1,15 +1,13 @@
 /* -*- Mode:C++; c-file-style:"gnu"; indent-tabs-mode:nil; -*- */
 
 #include "drr.h"
+#include "ns3/log.h"
 
 namespace ns3 {
 
 NS_LOG_COMPONENT_DEFINE ("Drr");
 NS_OBJECT_ENSURE_REGISTERED (Drr);
 
-/* The QueueMode specifies whether service is in byte mode or packet mode */
-QueueMode m_mode;
-vector<TrafficClass*> q_class; 
 
 /* For network queues, DoEnqueue() and DoDequeue() functions can be
 overwritten to meet implementation requirements for various QoS
@@ -20,25 +18,15 @@ TypeId Drr::GetTypeId (void) {
 	return tid;
 }
 
-/* Take packet as input and add to queueu */
-bool Drr::DoEnqueue(Ptr<ns3::Packet> p) {
-	return false;
-};
-
-
-/* Remove next packet from queue */
-Ptr<ns3::Packet> Drr::DoDequeue(void) {
+Ptr<ns3::Packet> Drr::Schedule() {
 	Ptr<Packet> p = Create<Packet>();
 	return p;
+}
+
+uint32_t Drr::Classify(Ptr<ns3::Packet> p) {
+	return 0;
 };
 
-//Ptr<ns3::Packet> DiffServ::DoRemove(void) {
 
-//};
-
-/* Get most recent Packet but do not remove */
-Ptr<ns3::Packet> Drr::DoPeek(void) {
-
-};
 }
 

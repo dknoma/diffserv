@@ -15,7 +15,7 @@ NS_OBJECT_ENSURE_REGISTERED (DiffServ);
 class. Maybe even a boolean but more flexible as a class right now. */
 
 QueueMode m_mode;
-//vector<TrafficClass*> q_class; 
+std::vector<TrafficClass*> q_class; 
 
 /* For network queues, DoEnqueue() and DoDequeue() functions can be
 overwritten to meet implementation requirements for various QoS
@@ -24,7 +24,7 @@ algorithms.  */
 TypeId DiffServ::GetTypeId (void) {
 	static TypeId tid = TypeId ("ns3::DiffServ");
 	return tid;
-}
+};
 
 /* Take packet as input and add to queueu */
 bool DiffServ::DoEnqueue(Ptr<ns3::Packet> p) {
@@ -37,10 +37,6 @@ Ptr<ns3::Packet> DiffServ::DoDequeue(void) {
 	Ptr<Packet> p = Create<Packet>();
 	return p;
 };
-
-//Ptr<ns3::Packet> DiffServ::DoRemove(void) {
-
-//};
 
 /* Get most recent Packet but do not remove */
 Ptr<ns3::Packet> DiffServ::DoPeek(void) {

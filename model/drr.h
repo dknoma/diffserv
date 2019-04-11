@@ -1,6 +1,6 @@
 /* -*- Mode:C++; c-file-style:"gnu"; indent-tabs-mode:nil; -*- */
-#ifndef DIFFSERV_H
-#define DIFFSERV_H
+#ifndef DRR_H
+#define DRR_H
 
 #include "ns3/diffserv.h"
 
@@ -36,6 +36,9 @@ public:
 	* This is the destructor for Drr.
 	*/
 	virtual ~Drr ();
+
+	Ptr<ns3::Packet> Schedule();
+	uint32_t Classify(Ptr<ns3::Packet> p);
 
 };
 

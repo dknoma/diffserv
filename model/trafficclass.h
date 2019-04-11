@@ -2,25 +2,19 @@
 #ifndef TRAFFICCLASS_H
 #define TRAFFICCLASS_H
 
-#include "ns3/address.h"
+#include "Filter.h"
 #include "ns3/node.h"
-#include "ns3/net-device.h"
-#include "ns3/callback.h"
-#include "ns3/packet.h"
-#include "ns3/traced-callback.h"
-#include "ns3/nstime.h"
-#include "ns3/data-rate.h"
-#include "ns3/ptr.h"
-#include "ns3/mac48-address.h"
+#include "ns3/log.h"
+#include <queue>
 
 
 namespace ns3 {
-template <typename Item> class Queue;
+template <typename Item> class queue;
 
 class TrafficClass
 {
 public:
-	vector<Filter*> filters;
+	std::vector<Filter*> filters;
 
 	/**
 	* \brief Get the TypeId
@@ -50,8 +44,8 @@ private:
 	uint32_t bytes;
 	uint32_t packets;
 	uint32_t maxPackets;
-	uint32_t maxBytes
-	double_t weight;
+	uint32_t maxBytes;
+	double weight;
 	uint32_t priority_level;
 	/* One queue that will take over the packets if packet comes in and 
 	does not match any of the other classes */

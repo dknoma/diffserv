@@ -2,18 +2,7 @@
 #ifndef SPQ_H
 #define SPQ_H
 
-#include "ns3/queue.h"
-#include "ns3/address.h"
-#include "ns3/node.h"
-#include "ns3/net-device.h"
-#include "ns3/callback.h"
-#include "ns3/packet.h"
-#include "ns3/traced-callback.h"
-#include "ns3/nstime.h"
-#include "ns3/data-rate.h"
-#include "ns3/ptr.h"
-#include "ns3/mac48-address.h"
-#include "ns3/spq.h"
+#include "diffserv.h"
 
 
 namespace ns3 {
@@ -47,7 +36,12 @@ public:
 	*
 	* This is the destructor for the Diffserv.
 	*/
+
 	virtual ~Spq ();
+
+	Ptr<ns3::Packet> Schedule(); 
+	uint32_t Classify(Ptr<ns3::Packet> p);
+
 
 };
 
