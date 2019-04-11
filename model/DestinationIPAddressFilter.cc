@@ -15,11 +15,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+#include "ns3/ipv4-address.h"
+#include "ns3/ipv4-header.h"
 #include "ns3/log.h"
 #include "ns3/packet.h"
 #include "ns3/uinteger.h"
 #include "ns3/trace-source-accessor.h"
-#include "FilterElement.h"
+#include "DestinationIPAddressFilter.h"
 #include <chrono>
 #include <thread>
 #include <iostream>
@@ -30,36 +32,46 @@
 
 namespace ns3 {
 
-NS_LOG_COMPONENT_DEFINE ("FilterElement");
+NS_LOG_COMPONENT_DEFINE ("DestinationIPAddressFilter");
 
-NS_OBJECT_ENSURE_REGISTERED (FilterElement);
+NS_OBJECT_ENSURE_REGISTERED (DestinationIPAddressFilter);
 
 TypeId
-FilterElement::GetTypeId (void)
+DestinationIPAddressFilter::GetTypeId (void)
 {
-  static TypeId tid = TypeId ("ns3::FilterElement")
+  static TypeId tid = TypeId ("ns3::DestinationIPAddressFilter")
     .SetParent<Object> ()
     .SetGroupName("DiffServ")
+    .AddAttribute ("Value",
+                   "Filter element value",
+                   Ipv4AddressValue (Ipv4Address ()),
+                   MakeIpv4AddressAccessor (&DestinationIPAddressFilter::value),
+                   MakeIpv4AddressChecker ())
   ;
   return tid;
 }
 
 // Constructors
-FilterElement::FilterElement ()
+DestinationIPAddressFilter::DestinationIPAddressFilter ()
 {
   NS_LOG_FUNCTION (this);
 }
 
-FilterElement::~FilterElement()
+DestinationIPAddressFilter::~DestinationIPAddressFilter()
 {
 
   NS_LOG_FUNCTION (this);
 }
 
 bool 
-FilterElement::Match (Ptr<ns3::Packet> packet)
+DestinationIPAddressFilter::Match (Ptr<ns3::Packet> packet)
 {
   NS_LOG_FUNCTION (this << packet);
-  return false;
+  std::cout << "THIS IS A SOURCE IP ADDRESS FILTER ELEMENT\n";
+  Ipv4Header header;
+  packet->PeekHeader(header); // Get the IPv4 header from the packet
+  Ipv4Address srcAddress = header.GetDestination();
+  std::cout << "src: " << srcAddress << "\n";
+  return srcAddress == value;
 }
 } // Namespace ns3

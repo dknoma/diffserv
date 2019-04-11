@@ -12,7 +12,8 @@ def build(bld):
         'model/project2.cc',
         'model/Filter.cc',
         'model/FilterElement.cc',
-        'helper/project2-helper.cc',
+        'model/SourceIPAddressFilter.cc',
+        'model/DestinationIPAddressFilter.cc'
         ]
 
     module_test = bld.create_ns3_module_test_library('project2')
@@ -26,6 +27,8 @@ def build(bld):
         'model/project2.h',
         'model/Filter.h',
         'model/FilterElement.h',
+        'model/SourceIPAddressFilter.h',
+        'model/DestinationIPAddressFilter.h'
         ]
     module.use.append("ZLIB1G")
     if bld.env.ENABLE_EXAMPLES:
