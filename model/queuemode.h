@@ -1,7 +1,9 @@
 /* -*- Mode:C++; c-file-style:"gnu"; indent-tabs-mode:nil; -*- */
-#ifndef TRAFFICCLASS_H
-#define TRAFFICCLASS_H
+#ifndef QUEUEMODE_H
+#define QUEUEMODE_H
 
+
+#include <cstring>
 #include "ns3/address.h"
 #include "ns3/node.h"
 #include "ns3/net-device.h"
@@ -13,14 +15,14 @@
 #include "ns3/ptr.h"
 #include "ns3/mac48-address.h"
 
-
 namespace ns3 {
-template <typename Item> class Queue;
+// template <typename Item> class Queue;
 
-class TrafficClass
-{
+/* DiffServ class provides basic functionalities required to simulate
+differentiated services */
+
+class QueueMode {
 public:
-	vector<Filter*> filters;
 
 	/**
 	* \brief Get the TypeId
@@ -36,31 +38,25 @@ public:
 	* parameter a pointer to the Node to which this device is connected, 
 	* as well as an optional DataRate object.
 	*/
-	TrafficClass ();
+	QueueMode ();
 
 	/**
 	* Destroy a DiffServ
 	*
 	* This is the destructor for the Diffserv.
 	*/
-	virtual ~TrafficClass ();
+	virtual ~QueueMode ();
 
+	int IsPacket();
+	int IsBytes();
 private:
-	/** Data Members */
-	uint32_t bytes;
-	uint32_t packets;
-	uint32_t maxPackets;
-	uint32_t maxBytes
-	double_t weight;
-	uint32_t priority_level;
-	/* One queue that will take over the packets if packet comes in and 
-	does not match any of the other classes */
-	bool isDefault;
-	std::queue<Ptr<ns3::Packet>> m_queue;
+	
+
+
 };
 
 }
 
 
-#endif /* TRAFFICCLASS_H */
+#endif /* QUEUEMODE_H */
 

@@ -2,19 +2,13 @@
 #ifndef DIFFSERV_H
 #define DIFFSERV_H
 
-
-#include "ns3/address.h"
-#include "ns3/node.h"
-#include "ns3/net-device.h"
-#include "ns3/callback.h"
+#include <cstring>
+#include "queuemode.h"
 #include "ns3/packet.h"
 #include "ns3/traced-callback.h"
 #include "ns3/nstime.h"
 #include "ns3/data-rate.h"
 #include "ns3/ptr.h"
-#include "ns3/mac48-address.h"
-
-
 
 namespace ns3 {
 template <typename Item> class Queue;
@@ -52,14 +46,18 @@ public:
 	Ptr<ns3::Packet> DoDequeue(void);
 	//Ptr<ns3::Packet> DoRemove(void);
 	Ptr<ns3::Packet> DoPeek(void);
-	//void SetMode(QueueMode mode);
-	//QueueMode GetMode(void);
-	//Ptr<ns3::Packet> GetMode(void);
+
+	/* Required Methods */
+
+	/* This queue will be true for whole vector of traffic classes */
+	void SetMode(QueueMode mode);
+	QueueMode GetMode(void);
+	/* Also required methods, can be private or public */
 	/* Returns a packet to transmit. How do we determine this packet?  */
-	//Ptr<ns3::Packet> Schedule();
+	virtual Ptr<ns3::Packet> Schedule();
 	/*  The classify function utilizes filter aspect to sort the traffic packets into appropriate traffic
 	queues. */
-	//uint32_t Classify(Ptr<ns3::Packet> p);
+	virtual uint32_t Classify(Ptr<ns3::Packet> p);
 
 };
 

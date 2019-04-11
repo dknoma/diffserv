@@ -12,6 +12,8 @@ def build(bld):
         'model/project2.cc',
         'model/Filter.cc',
         'model/FilterElement.cc',
+        'model/diffserv.cc',
+        'model/queuemode.cc',
         'helper/project2-helper.cc',
         ]
 
@@ -25,6 +27,10 @@ def build(bld):
     headers.source = [
         'model/project2.h',
         'model/Filter.h',
+        'model/FilterElement.h',
+        'model/diffserv.h',
+        'model/queuemode.h',
+        'model/FilterElement.h',
         'model/FilterElement.h',
         ]
     module.use.append("ZLIB1G")

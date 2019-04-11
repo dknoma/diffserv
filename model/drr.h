@@ -10,7 +10,7 @@ template <typename Item> class Queue;
 
 /* DRR class inherits from DiffServ Class and implements Deficit Round Robin Queue */
 
-class Drr : public Diffserv
+class Drr : public DiffServ
 {
 public:
 

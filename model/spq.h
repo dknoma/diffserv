@@ -22,7 +22,7 @@ template <typename Item> class Queue;
 /* DiffServ class provides basic functionalities required to simulate
 differentiated services */
 
-class Spq : public Diffserv
+class Spq : public DiffServ
 {
 public:
 
@@ -54,5 +54,5 @@ public:
 }
 
 
-#endif /* DIFFSERV_H */
+#endif /* Spq_H */
 
