@@ -10,14 +10,18 @@
 #include "ns3/nstime.h"
 #include "ns3/data-rate.h"
 #include "ns3/ptr.h"
+#include "ns3/drop-tail-queue.h"
 
 namespace ns3 {
-template <typename Item> class Queue;
+
 
 /* DiffServ class provides basic functionalities required to simulate
 differentiated services */
 
-class DiffServ {
+/* This makes DiffServ a template */
+template <typename Item>
+class DiffServ : public DropTailQueue<Item>
+{
 public:
 
 	/**

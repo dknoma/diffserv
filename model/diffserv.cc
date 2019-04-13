@@ -1,14 +1,14 @@
 /* -*- Mode:C++; c-file-style:"gnu"; indent-tabs-mode:nil; -*- */
 
 #include "diffserv.h"
+#include "queuemode.h"
 #include "ns3/queue.h"
 #include "ns3/log.h"
 #include <cstdlib>
 
 namespace ns3 {
-
 NS_LOG_COMPONENT_DEFINE ("DiffServ");
-NS_OBJECT_ENSURE_REGISTERED (DiffServ);
+// NS_OBJECT_ENSURE_REGISTERED (DiffServ);
 
 /* The QueueMode specifies whether service is in byte mode or packet mode */
 /* Queuemode is an enum of queue in other versions. Should be able to work as a 
@@ -20,35 +20,40 @@ std::vector<TrafficClass*> q_class;
 /* For network queues, DoEnqueue() and DoDequeue() functions can be
 overwritten to meet implementation requirements for various QoS
 algorithms.  */
-
-TypeId DiffServ::GetTypeId (void) {
+template <typename Item>
+TypeId DiffServ<Item>::GetTypeId (void) {
 	static TypeId tid = TypeId ("ns3::DiffServ");
 	return tid;
 };
 
-/* Take packet as input and add to queueu */
-bool DiffServ::DoEnqueue(Ptr<ns3::Packet> p) {
-	return false;
+/* Take packet as input and add to queue */
+template <typename Item>
+bool DiffServ<Item>::DoEnqueue(Ptr<ns3::Packet> p) {
+	return this -> Enqueue(p);
 };
 
 
 /* Remove next packet from queue */
-Ptr<ns3::Packet> DiffServ::DoDequeue(void) {
-	Ptr<Packet> p = Create<Packet>();
+template <typename Item>
+Ptr<ns3::Packet> DiffServ<Item>::DoDequeue(void) {
+	Ptr<Packet> p = this -> DoDequeue (this -> Head ());
+  	NS_LOG_LOGIC ("Popped " << p);
 	return p;
 };
 
 /* Get most recent Packet but do not remove */
-Ptr<ns3::Packet> DiffServ::DoPeek(void) {
-	Ptr<Packet> p = Create<Packet>();
-	return  p;
+template <typename Item>
+Ptr<ns3::Packet> DiffServ<Item>::DoPeek(void) {
+	return this -> DoPeek (this -> Head ());
 };
 
-void DiffServ::SetMode(QueueMode mode) {
+template <typename Item>
+void DiffServ<Item>::SetMode(QueueMode mode) {
 	m_mode = mode;
 };
 
-QueueMode DiffServ::GetMode(void) {
+template <typename Item>
+	QueueMode DiffServ<Item>::GetMode(void) {
 	return m_mode;
 };
 
