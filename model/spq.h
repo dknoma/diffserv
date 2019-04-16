@@ -6,11 +6,10 @@
 
 
 namespace ns3 {
-template <typename Item> class DropTailQueue;
 
 /* DiffServ class provides basic functionalities required to simulate
 differentiated services */
-
+template <typename Item>
 class Spq : public DiffServ<Item>
 {
 public:

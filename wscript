@@ -7,7 +7,7 @@
 #     conf.check_nonfatal(header_name='stdint.h', define_name='HAVE_STDINT_H')
 
 def build(bld):
-    module = bld.create_ns3_module('project2', ['applications','core', 'internet', 'csma', 'config-store','stats'])
+    module = bld.create_ns3_module('project2', ['applications','core', 'internet', 'csma', 'config-store','stats', 'point-to-point'])
     module.source = [
         'model/project2.cc',
         'model/Filter.cc',
@@ -15,9 +15,12 @@ def build(bld):
         'model/diffserv.cc',
         'model/trafficclass.cc',
         'model/queuemode.cc',
-        #'model/spq.cc',
-        #'model/drr.cc',
+        'model/udp-app-server.cc',
+        'model/udp-app-client.cc',
+        'model/spq.cc',
+        'model/drr.cc',
         'helper/project2-helper.cc',
+        'helper/udp-app-helper.cc',
         ]
 
     module_test = bld.create_ns3_module_test_library('project2')
@@ -34,10 +37,13 @@ def build(bld):
         'model/diffserv.h',
         'model/trafficclass.h',
         'model/queuemode.h',
-        #'model/spq.h',
-        #'model/drr.h',
+        'model/udp-app-server.cc',
+        'model/udp-app-client.cc',
+        'model/spq.h',
+        'model/drr.h',
         'model/FilterElement.h',
         'model/FilterElement.h',
+        'helper/udp-app-helper.h',
         ]
     module.use.append("ZLIB1G")
     if bld.env.ENABLE_EXAMPLES:

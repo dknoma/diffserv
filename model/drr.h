@@ -6,10 +6,10 @@
 
 
 namespace ns3 {
-template <typename Item> class DropTailQueue;
+
 
 /* DRR class inherits from DiffServ Class and implements Deficit Round Robin Queue */
-
+template <typename Item>
 class Drr : public DiffServ<Item>
 {
 public:
