@@ -36,10 +36,10 @@ To run a module, simply do a command like the following:
 ./waf --run <module name>
 ```
 
-Additionally, you some applications allow you to input additional parameters into the command line to change the way it runs. For this program this command would be the following:
+Additionally, you some applications allow you to input additional parameters into the command line to change the way it runs. This application requires you to input the path to the config file that has the number of queues, priority of each queue, etc. For this program this command would be the following:
 
 ```
-./waf --run "spq-example --config-file-name.json"
+./waf --run "spq-example --config=config.json"
 ```
 
 This command  will let the UDP application run with compression enabled, and it will set the PointToPointNetDevice's Data Rate to 8Mbps. 

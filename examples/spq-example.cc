@@ -41,7 +41,7 @@ main (int argc, char *argv[])
   cmd.Parse (argc,argv);
 
   // Read config file; take inputstream from the file and put it all in json j
-  std::ifstream jsonIn("config.json");
+  std::ifstream jsonIn(pathToConfigFile);
   json j;
   jsonIn >> j;
 
