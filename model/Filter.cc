@@ -16,6 +16,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 #include "ns3/log.h"
+#include "ns3/object-vector.h"
 #include "ns3/packet.h"
 #include "ns3/uinteger.h"
 #include "ns3/trace-source-accessor.h"
@@ -41,7 +42,11 @@ Filter::GetTypeId (void)
   static TypeId tid = TypeId ("ns3::Filter")
     .SetParent<Object> ()
     .SetGroupName("DiffServ")
-    // .AddConstructor<Filter> ()
+    .AddAttribute ("FilterElements", 
+                   "The list of filter elements of the inbound packets",
+                   ObjectVectorValue (),
+                   MakeObjectVectorAccessor (&Filter::elements),
+                   MakeObjectVectorChecker<FilterElement> ())
   ;
   return tid;
 }
@@ -55,7 +60,6 @@ Filter::Filter ()
 
 Filter::~Filter()
 {
-
   NS_LOG_FUNCTION (this);
 }
 
@@ -65,6 +69,20 @@ Filter::Match (Ptr<ns3::Packet> packet)
   NS_LOG_FUNCTION (this << packet);
   // TODO: for each element in vector, check its virtual match against the corresponding packet element
   // Elements ^/AND each other. HAS to satisfy ALL filter elements for this specific filter
-  return false;
+  bool matching = false;
+  // for (std::vector<FilterElement*>::iterator i = elements.begin(); i != elements.end(); ++i)
+  for(uint32_t i = 0; i < elements.size(); i++)
+  {
+    std::cout << "filter element[" << i << "]\n";
+    matching = elements.at(i) -> Match(packet);
+  }
+  return matching;
+}
+
+void
+Filter::SetElements(std::vector<FilterElement*> filterElements)
+{
+  NS_LOG_FUNCTION (this);
+  elements = filterElements;
 }
 } // Namespace ns3

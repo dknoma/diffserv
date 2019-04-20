@@ -16,25 +16,26 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef FILTER_H
-#define FILTER_H
+#ifndef SRC_IP_FILTER_H
+#define SRC_IP_FILTER_H
 
 #include "ns3/event-id.h"
+#include "ns3/FilterElement.h"
+#include "ns3/ipv4-address.h"
 #include "ns3/object.h"
 #include "ns3/packet.h"
 #include "ns3/ptr.h"
 #include "ns3/traced-callback.h"
-#include "FilterElement.h"
 
 namespace ns3 {
 
 /**
- * \ingroup udpapp
- * \brief A Udp App client
+ * \ingroup filterelement
+ * \brief A Filter Element
  *
- * Every packet sent should be returned by the server and received here.
+ * Every packet sent should be matched against one of these Filter Elements
  */
-class Filter : public Object 
+class SourceIPAddressFilter : public FilterElement
 {
 public:
   /**
@@ -42,17 +43,29 @@ public:
    * \return the object TypeId
    */
   static TypeId GetTypeId (void);
+  
+  /**
+   * \brief SourceIPAddressFilter Constructor
+   *
+   * Create a Source IP Address filter element
+   */
+  SourceIPAddressFilter ();
 
-  std::vector<FilterElement*> elements;
+  /**
+   * \brief Destructor
+   *
+   * Destructor
+   */ 
+  virtual ~SourceIPAddressFilter ();
 
-  Filter ();
-  virtual ~Filter ();
-
-  bool Match(Ptr<ns3::Packet> packet);
-  void SetElements(std::vector<FilterElement*> filterElements);
-
+  /**
+   * \brief Does the packet match the filter
+   */
+  virtual bool Match (Ptr<ns3::Packet> packet);
+private:
+  Ipv4Address value;
 };
 
 } // namespace ns3
 
-#endif /* UDP_APP_CLIENT_H */
+#endif /* FILTER_ELEMENT_H */
