@@ -1,7 +1,10 @@
 # -*- Mode: python; py-indent-offset: 4; indent-tabs-mode: nil; coding: utf-8; -*-
 
 def build(bld):
-    obj = bld.create_ns3_program('project2-example', ['project2'])
-    obj.source = 'project2-example.cc'
+    obj = bld.create_ns3_program('spq-example', ['project2'])
+    obj.source = 'spq-example.cc'
+
+    obj = bld.create_ns3_program('drr-example', ['project2'])
+    obj.source = 'drr-example.cc'
 
 
