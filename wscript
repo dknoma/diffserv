@@ -12,7 +12,6 @@ def build(bld):
         'model/project2.cc',
         'model/Filter.cc',
         'model/FilterElement.cc',
-<<<<<<< HEAD
         'model/diffserv.cc',
         'model/trafficclass.cc',
         'model/queuemode.cc',
@@ -22,10 +21,8 @@ def build(bld):
         'model/drr.cc',
         'helper/project2-helper.cc',
         'helper/udp-app-helper.cc',
-=======
         'model/SourceIPAddressFilter.cc',
         'model/DestinationIPAddressFilter.cc'
->>>>>>> master
         ]
 
     module_test = bld.create_ns3_module_test_library('project2')
@@ -39,7 +36,6 @@ def build(bld):
         'model/project2.h',
         'model/Filter.h',
         'model/FilterElement.h',
-<<<<<<< HEAD
         'model/diffserv.h',
         'model/trafficclass.h',
         'model/queuemode.h',
@@ -50,10 +46,8 @@ def build(bld):
         'model/FilterElement.h',
         'model/FilterElement.h',
         'helper/udp-app-helper.h',
-=======
         'model/SourceIPAddressFilter.h',
         'model/DestinationIPAddressFilter.h'
->>>>>>> master
         ]
     module.use.append("ZLIB1G")
     if bld.env.ENABLE_EXAMPLES:
