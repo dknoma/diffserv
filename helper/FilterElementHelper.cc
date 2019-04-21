@@ -15,44 +15,32 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-
-#ifndef FILTER_H
-#define FILTER_H
-
-#include "ns3/event-id.h"
-#include "ns3/object.h"
+#include "ns3/log.h"
 #include "ns3/packet.h"
-#include "ns3/ptr.h"
-#include "ns3/traced-callback.h"
-#include "FilterElement.h"
+#include "ns3/uinteger.h"
+#include "ns3/trace-source-accessor.h"
+#include "ns3/FilterElement.h"
+#include <chrono>
+#include <thread>
+#include <iostream>
+#include <unistd.h>
+#include <fcntl.h>
+#include <fstream>
+#include <bitset>
 
 namespace ns3 {
 
-/**
- * \ingroup udpapp
- * \brief A Udp App client
- *
- * Every packet sent should be returned by the server and received here.
- */
-class Filter : public Object 
+SourcePortNumberFilterHelper::SourcePortNumberFilterHelper (uint32_t port)
 {
-public:
-  /**
-   * \brief Get the type ID.
-   * \return the object TypeId
-   */
-  static TypeId GetTypeId (void);
+	m_factory.SetTypeId(SourcePortNumberFilter::GetTypeId());
+	SetAttribute("Port", UintegerValue (port));
+}
 
-  std::vector<FilterElement*> elements;
-
-  Filter ();
-  virtual ~Filter ();
-
-  bool Match(Ptr<ns3::Packet> packet);
-  void SetFilterElements(std::vector<FilterElement*> filterElements);
-
-};
-
-} // namespace ns3
-
-#endif /* UDP_APP_CLIENT_H */
+void 
+SourcePortNumberFilterHelper::SetAttribute (
+  std::string name, 
+  const AttributeValue &value)
+{
+  m_factory.Set (name, value);
+}
+} // Namespace ns3

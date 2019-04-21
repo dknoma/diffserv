@@ -80,7 +80,7 @@ Filter::Match (Ptr<ns3::Packet> packet)
 }
 
 void
-Filter::SetElements(std::vector<FilterElement*> filterElements)
+Filter::SetFilterElements(std::vector<FilterElement*> filterElements)
 {
   NS_LOG_FUNCTION (this);
   elements = filterElements;
