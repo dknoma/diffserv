@@ -23,6 +23,12 @@ traffic queue to be served at the time. */
 template <typename Item>
 Ptr<ns3::Packet> Spq<Item>::Schedule() {
 	Ptr<Packet> p = Create<Packet>();
+	/* If we received a high priority packet, deal with that first */
+
+	/* Else if there are no high priority packets, we can deal with the low 
+	priority packets */
+
+	/* Retun the packet that we'd like to dequeue */
 	return p;
 }
 
@@ -30,6 +36,7 @@ Ptr<ns3::Packet> Spq<Item>::Schedule() {
 queues. */
 template <typename Item>
 uint32_t Spq<Item>::Classify(Ptr<ns3::Packet> p) {
+	/* Decide which queue to inert this packet into */
 	return 0;
 }
 

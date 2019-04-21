@@ -14,7 +14,6 @@ NS_LOG_COMPONENT_DEFINE ("DiffServ");
 /* Queuemode is an enum of queue in other versions. Should be able to work as a 
 class. Maybe even a boolean but more flexible as a class right now. */
 
-QueueMode m_mode;
 std::vector<TrafficClass*> q_class; 
 
 /* For network queues, DoEnqueue() and DoDequeue() functions can be
@@ -26,7 +25,9 @@ TypeId DiffServ<Item>::GetTypeId (void) {
 	return tid;
 };
 
-/* Take packet as input and add to queue */
+/* Take packet as input and add to queue. We will need
+to figure out which queue to add to in here, using classify.
+ */
 template <typename Item>
 bool DiffServ<Item>::DoEnqueue(Ptr<ns3::Packet> p) {
 	return this -> Enqueue(p);
@@ -48,13 +49,13 @@ Ptr<ns3::Packet> DiffServ<Item>::DoPeek(void) {
 };
 
 template <typename Item>
-void DiffServ<Item>::SetMode(QueueMode mode) {
-	m_mode = mode;
+void DiffServ<Item>::SetMode(uint32_t mode) {
+	DiffServ<Item>::m_mode = mode;
 };
 
 template <typename Item>
-	QueueMode DiffServ<Item>::GetMode(void) {
-	return m_mode;
+	uint32_t DiffServ<Item>::GetMode(void) {
+	return DiffServ<Item>::m_mode;
 };
 
 
@@ -69,10 +70,6 @@ appropriate traffic queues. */
 //uint32_t DiffServ::Schedule(Ptr<ns3::Packet> p) {
 	
 //};
-
-/* Additional Functions */
-/* Two separate functions need to be implemented per QoS algorithm
-design of the developer’s choice. */
 
 }
 

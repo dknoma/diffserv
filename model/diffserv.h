@@ -3,7 +3,6 @@
 #define DIFFSERV_H
 
 #include <cstring>
-#include "queuemode.h"
 #include "trafficclass.h"
 #include "ns3/packet.h"
 #include "ns3/traced-callback.h"
@@ -13,7 +12,6 @@
 #include "ns3/drop-tail-queue.h"
 
 namespace ns3 {
-
 
 /* DiffServ class provides basic functionalities required to simulate
 differentiated services */
@@ -49,21 +47,22 @@ public:
 
 	bool DoEnqueue(Ptr<ns3::Packet> p);
 	Ptr<ns3::Packet> DoDequeue(void);
-	//Ptr<ns3::Packet> DoRemove(void);
 	Ptr<ns3::Packet> DoPeek(void);
 
 	/* Required Methods */
 
 	/* This queue will be true for whole vector of traffic classes */
-	void SetMode(QueueMode mode);
-	QueueMode GetMode(void);
+	void SetMode(uint32_t mode);
+	uint32_t GetMode();
 	/* Also required methods, can be private or public */
 	/* Returns a packet to transmit. How do we determine this packet?  */
 	virtual Ptr<ns3::Packet> Schedule();
 	/*  The classify function utilizes filter aspect to sort the traffic packets into appropriate traffic
 	queues. */
 	virtual uint32_t Classify(Ptr<ns3::Packet> p);
-
+private:
+	/* If 0, byte mode. If 1, packet mode. */
+	uint32_t m_mode;
 };
 
 }

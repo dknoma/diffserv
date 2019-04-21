@@ -45,7 +45,11 @@ private:
 	uint32_t packets;
 	uint32_t maxPackets;
 	uint32_t maxBytes;
+
+	/* Applicable is QOS uses weight, DRR */
 	double weight;
+
+	/* Applicable is QOS uses priority level, SPQ */
 	uint32_t priority_level;
 	/* One queue that will take over the packets if packet comes in and 
 	does not match any of the other classes */
