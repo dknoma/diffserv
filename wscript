@@ -18,6 +18,12 @@ def build(bld):
         'model/DestinationIPAddressFilter.cc',
         'model/SourcePortNumberFilter.cc',
         'model/DestinationPortNumberFilter.cc',
+        'model/diffserv.cc',
+        'model/trafficclass.cc',
+        'model/udp-app-server.cc',
+        'model/udp-app-client.cc',
+        'model/spq.cc',
+        'model/drr.cc',
         ]
 
     module_test = bld.create_ns3_module_test_library('project2')
@@ -36,6 +42,12 @@ def build(bld):
         'model/DestinationIPAddressFilter.h',
         'model/SourcePortNumberFilter.h',
         'model/DestinationPortNumberFilter.h',
+        'model/diffserv.h',
+        'model/trafficclass.h',
+        'model/udp-app-server.h',
+        'model/udp-app-client.h',
+        'model/spq.h',
+        'model/drr.h',
         ]
     module.use.append("ZLIB1G")
     if bld.env.ENABLE_EXAMPLES:

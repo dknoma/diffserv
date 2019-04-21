@@ -1,7 +1,6 @@
 /* -*- Mode:C++; c-file-style:"gnu"; indent-tabs-mode:nil; -*- */
 
 #include "diffserv.h"
-#include "queuemode.h"
 #include "ns3/queue.h"
 #include "ns3/log.h"
 #include <cstdlib>
