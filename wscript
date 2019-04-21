@@ -12,17 +12,12 @@ def build(bld):
         'model/project2.cc',
         'model/Filter.cc',
         'model/FilterElement.cc',
-        'model/diffserv.cc',
-        'model/trafficclass.cc',
-        'model/queuemode.cc',
-        'model/udp-app-server.cc',
-        'model/udp-app-client.cc',
-        'model/spq.cc',
-        'model/drr.cc',
         'helper/project2-helper.cc',
         'helper/udp-app-helper.cc',
         'model/SourceIPAddressFilter.cc',
-        'model/DestinationIPAddressFilter.cc'
+        'model/DestinationIPAddressFilter.cc',
+        'model/SourcePortNumberFilter.cc',
+        'model/DestinationPortNumberFilter.cc',
         ]
 
     module_test = bld.create_ns3_module_test_library('project2')
@@ -36,18 +31,11 @@ def build(bld):
         'model/project2.h',
         'model/Filter.h',
         'model/FilterElement.h',
-        'model/diffserv.h',
-        'model/trafficclass.h',
-        'model/queuemode.h',
-        'model/udp-app-server.cc',
-        'model/udp-app-client.cc',
-        'model/spq.h',
-        'model/drr.h',
-        'model/FilterElement.h',
-        'model/FilterElement.h',
         'helper/udp-app-helper.h',
         'model/SourceIPAddressFilter.h',
-        'model/DestinationIPAddressFilter.h'
+        'model/DestinationIPAddressFilter.h',
+        'model/SourcePortNumberFilter.h',
+        'model/DestinationPortNumberFilter.h',
         ]
     module.use.append("ZLIB1G")
     if bld.env.ENABLE_EXAMPLES:

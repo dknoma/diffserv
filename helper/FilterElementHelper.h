@@ -16,43 +16,37 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef FILTER_H
-#define FILTER_H
+#ifndef FILTER_ELEMENT_HELPER_H
+#define FILTER_ELEMENT_HELPER_H
 
+#include "ns3/FilterElement.h"
 #include "ns3/event-id.h"
 #include "ns3/object.h"
+#include "ns3/object-factory.h"
 #include "ns3/packet.h"
 #include "ns3/ptr.h"
 #include "ns3/traced-callback.h"
-#include "FilterElement.h"
 
 namespace ns3 {
 
 /**
- * \ingroup udpapp
- * \brief A Udp App client
+ * \ingroup filterelement
+ * \brief A Filter Element
  *
- * Every packet sent should be returned by the server and received here.
+ * Every packet sent should be matched against one of these Filter Elements
  */
-class Filter : public Object 
+class SourcePortNumberFilterHelper
 {
 public:
-  /**
-   * \brief Get the type ID.
-   * \return the object TypeId
-   */
-  static TypeId GetTypeId (void);
+  SourcePortNumberFilterHelper (uint32_t port);
 
-  std::vector<FilterElement*> elements;
-
-  Filter ();
-  virtual ~Filter ();
-
-  bool Match(Ptr<ns3::Packet> packet);
-  void SetFilterElements(std::vector<FilterElement*> filterElements);
-
+  void SetAttribute (std::string name, const AttributeValue &value);
+ 
+private:
+  
+  ObjectFactory m_factory; //!< Object factory.
 };
 
 } // namespace ns3
 
-#endif /* UDP_APP_CLIENT_H */
+#endif /* FILTER_ELEMENT_H */
