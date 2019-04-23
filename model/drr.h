@@ -36,7 +36,8 @@ public:
 	* This is the destructor for Drr.
 	*/
 	virtual ~Drr ();
-
+	Ptr<ns3::Packet> DoEnqueue();
+	uint32_t DoDequeue(Ptr<ns3::Packet> p);
 	Ptr<ns3::Packet> Schedule();
 	uint32_t Classify(Ptr<ns3::Packet> p);
 

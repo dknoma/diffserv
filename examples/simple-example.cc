@@ -63,6 +63,8 @@ main (int argc, char *argv[])
   /* Instantiate diffserv, traffic class, filters */
   Ptr<Packet> packet = Create<Packet>();
   DiffServ<Packet> diffserv;
+  //Spq<Packet> spq;
+  //Drr<Packet> drr;
   diffserv.DoEnqueue(packet);
 
   TrafficClass traffic;

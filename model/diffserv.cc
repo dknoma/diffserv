@@ -85,6 +85,6 @@ Ptr<Item> DiffServ<Item>::Schedule(void) {
 
 /* Need these to say what types we can use in diffserv (Bytes and Packets) */
 template class DiffServ<Packet>;
-template class DiffServ<uint32_t>;
+//template class DiffServ<uint32_t>;
 }
 

@@ -24,5 +24,25 @@ TrafficClass::~TrafficClass ()
   NS_LOG_FUNCTION (this);
 }
 
+uint32_t TrafficClass::GetPriorityLevel()
+{
+	return this -> priority_level;
+}
+
+void TrafficClass::SetPriorityLevel(uint32_t p)
+{
+	this -> priority_level = p;
+}
+
+double TrafficClass::GetWeight()
+{
+	return this -> weight;
+}
+
+void TrafficClass::SetWeight(double w)
+{
+	this -> weight = w;
+}
+
 }
 

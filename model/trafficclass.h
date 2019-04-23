@@ -38,6 +38,12 @@ public:
 	* This is the destructor for the Diffserv.
 	*/
 	virtual ~TrafficClass ();
+	/* Getters and Setters for Priority Level and Weights */
+	uint32_t GetPriorityLevel(void);
+	void SetPriorityLevel(uint32_t p);
+
+	double GetWeight(void);
+	void SetWeight(double w);
 
 private:
 	/** Data Members */

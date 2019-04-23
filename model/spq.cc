@@ -30,7 +30,7 @@ Ptr<ns3::Packet> Spq<Item>::Schedule() {
 
 	/* Retun the packet that we'd like to dequeue */
 	return p;
-}
+};
 
 /* The classify function utilizes filter aspect to sort the traffic packets into appropriate traffic
 queues. */
@@ -38,7 +38,7 @@ template <typename Item>
 uint32_t Spq<Item>::Classify(Ptr<ns3::Packet> p) {
 	/* Decide which queue to inert this packet into */
 	return 0;
-}
+};
 
 }
 
