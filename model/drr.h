@@ -9,8 +9,7 @@ namespace ns3 {
 
 
 /* DRR class inherits from DiffServ Class and implements Deficit Round Robin Queue */
-template <typename Item>
-class Drr : public DiffServ<Item>
+class Drr : public DiffServ<Packet>
 {
 public:
 
@@ -36,8 +35,9 @@ public:
 	* This is the destructor for Drr.
 	*/
 	virtual ~Drr ();
-	Ptr<ns3::Packet> DoEnqueue();
-	uint32_t DoDequeue(Ptr<ns3::Packet> p);
+	bool DoEnqueue(Ptr<Packet> T);
+	Ptr<const ns3::Packet>DoPeek();
+	Ptr<Packet> DoDequeue(void);
 	Ptr<ns3::Packet> Schedule();
 	uint32_t Classify(Ptr<ns3::Packet> p);
 

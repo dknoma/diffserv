@@ -6,43 +6,83 @@
 namespace ns3 {
 
 NS_LOG_COMPONENT_DEFINE ("TrafficClass");
-NS_OBJECT_ENSURE_REGISTERED (TrafficClass);
+// NS_OBJECT_ENSURE_REGISTERED (TrafficClass);
 
-TypeId TrafficClass::GetTypeId (void) {
+template <typename Item>
+TypeId TrafficClass<Item>::GetTypeId (void) {
 	static TypeId tid = TypeId ("ns3::TrafficClass");
 	return tid;
 }
 
 // constructor
-TrafficClass::TrafficClass()
+template <typename Item>
+TrafficClass<Item>::TrafficClass()
 {
   NS_LOG_FUNCTION (this);
 }
 
-TrafficClass::~TrafficClass ()
+template <typename Item>
+TrafficClass<Item>::~TrafficClass ()
 {
   NS_LOG_FUNCTION (this);
 }
 
-uint32_t TrafficClass::GetPriorityLevel()
+template <typename Item>
+uint32_t TrafficClass<Item>::GetPriorityLevel()
 {
 	return this -> priority_level;
 }
 
-void TrafficClass::SetPriorityLevel(uint32_t p)
+template <typename Item>
+void TrafficClass<Item>::SetPriorityLevel(uint32_t p)
 {
 	this -> priority_level = p;
 }
 
-double TrafficClass::GetWeight()
+template <typename Item>
+double TrafficClass<Item>::GetWeight()
 {
 	return this -> weight;
 }
 
-void TrafficClass::SetWeight(double w)
+template <typename Item>
+void TrafficClass<Item>::SetWeight(double w)
 {
 	this -> weight = w;
 }
+
+template <typename Item>
+void TrafficClass<Item>::AddFilter(Filter *f)
+{
+	this -> filters.push_back(f);
+}
+
+template <typename Item>
+bool TrafficClass<Item>::Enqueue(Ptr<Item> T)
+{
+	return this -> Enqueue(T);
+}
+
+template <typename Item>
+Ptr<Item> TrafficClass<Item>::Dequeue(void)
+{
+	return this -> Dequeue ();
+}
+
+template <typename Item>
+bool TrafficClass<Item>::match(Ptr<Item> T)
+{
+	/* Check filter to see if packet matches */
+	
+
+	/* Add to internal queue if it's a match */
+
+	/* And return true if it's a match */
+
+	/* Return false if now */
+	return false;
+}
+template class TrafficClass<Packet>;
 
 }
 

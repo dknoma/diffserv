@@ -14,6 +14,9 @@ This one is for SPQ
 #include "ns3/internet-module.h"
 #include "ns3/udp-app-helper.h"
 #include "ns3/diffserv.h"
+#include "ns3/spq.h"
+#include "ns3/drr.h"
+#include "ns3/Filter.h"
 #include <nlohmann/json.hpp>
 #include <iomanip>
 #include <stdio.h>
@@ -62,12 +65,14 @@ main (int argc, char *argv[])
 
   /* Instantiate diffserv, traffic class, filters */
   Ptr<Packet> packet = Create<Packet>();
-  DiffServ<Packet> diffserv;
-  //Spq<Packet> spq;
-  //Drr<Packet> drr;
-  diffserv.DoEnqueue(packet);
-
-  TrafficClass traffic;
+  Spq spq;
+  Drr drr;
+  spq.DoEnqueue(packet);
+  spq.DoDequeue();
+  TrafficClass<Packet> traffic;
+  Filter filter;
+  Filter *filter_p = new Filter(filter);
+  traffic.AddFilter(filter_p);
   /* Create packet */
   /* Filter packet into correct queue */
 

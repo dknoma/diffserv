@@ -9,8 +9,7 @@ namespace ns3 {
 
 /* DiffServ class provides basic functionalities required to simulate
 differentiated services */
-template <typename Item>
-class Spq : public DiffServ<Item>
+class Spq : public DiffServ<Packet>
 {
 public:
 
@@ -37,7 +36,9 @@ public:
 	*/
 
 	virtual ~Spq ();
-
+	bool DoEnqueue(Ptr<Packet> T);
+	Ptr<const ns3::Packet> DoPeek();
+	Ptr<Packet> DoDequeue(void);
 	Ptr<ns3::Packet> Schedule(); 
 	uint32_t Classify(Ptr<ns3::Packet> p);
 

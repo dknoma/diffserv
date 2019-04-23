@@ -12,7 +12,7 @@ NS_LOG_COMPONENT_DEFINE ("DiffServ");
 /* Queuemode is an enum of queue in other versions. Should be able to work as a 
 class. Maybe even a boolean but more flexible as a class right now. */
 
-std::vector<TrafficClass*> q_class; 
+std::vector<TrafficClass<Packet>*> q_class; 
 
 // constructor
 template <typename Item>

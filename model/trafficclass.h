@@ -6,12 +6,12 @@
 #include "ns3/node.h"
 #include "ns3/log.h"
 #include <queue>
+#include "ns3/drop-tail-queue.h"
 
 
 namespace ns3 {
-template <typename Item> class queue;
-
-class TrafficClass
+template <typename Item>
+class TrafficClass : public DropTailQueue<Item>
 {
 public:
 	std::vector<Filter*> filters;
@@ -45,6 +45,17 @@ public:
 	double GetWeight(void);
 	void SetWeight(double w);
 
+	/* Add Filter to Filters Vector, may or may not need */
+	void AddFilter (Filter *f);
+
+	/* Enqueue and Dequeue to add the packets */
+	bool Enqueue(Ptr<Item> T);
+	Ptr<Item> Dequeue(void);
+
+	/* Match */
+	bool match (Ptr<Item> T);
+
+
 private:
 	/** Data Members */
 	uint32_t bytes;
@@ -60,7 +71,7 @@ private:
 	/* One queue that will take over the packets if packet comes in and 
 	does not match any of the other classes */
 	bool isDefault;
-	std::queue<Ptr<ns3::Packet>> m_queue;
+	std::queue<Ptr<Packet>> m_queue;
 };
 
 }
