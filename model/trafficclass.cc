@@ -13,5 +13,16 @@ TypeId TrafficClass::GetTypeId (void) {
 	return tid;
 }
 
+// constructor
+TrafficClass::TrafficClass()
+{
+  NS_LOG_FUNCTION (this);
+}
+
+TrafficClass::~TrafficClass ()
+{
+  NS_LOG_FUNCTION (this);
+}
+
 }
 

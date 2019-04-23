@@ -45,22 +45,23 @@ public:
 	*/
 	virtual ~DiffServ ();
 
-	bool DoEnqueue(Ptr<ns3::Packet> p);
-	Ptr<ns3::Packet> DoDequeue(void);
-	Ptr<ns3::Packet> DoPeek(void);
-
 	/* Required Methods */
 
 	/* This queue will be true for whole vector of traffic classes */
 	void SetMode(uint32_t mode);
 	uint32_t GetMode();
+	bool DoEnqueue(Ptr<Item> T);
+	Ptr<Item> DoDequeue(void);
+	Ptr<const Item> DoPeek(void);
 	/* Also required methods, can be private or public */
 	/* Returns a packet to transmit. How do we determine this packet?  */
-	virtual Ptr<ns3::Packet> Schedule();
+	virtual Ptr<Item> Schedule();
 	/*  The classify function utilizes filter aspect to sort the traffic packets into appropriate traffic
 	queues. */
-	virtual uint32_t Classify(Ptr<ns3::Packet> p);
+	virtual uint32_t Classify(Ptr<Item> p);
 private:
+
+	
 	/* If 0, byte mode. If 1, packet mode. */
 	uint32_t m_mode;
 };

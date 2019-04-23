@@ -24,7 +24,7 @@ public:
 	static TypeId GetTypeId (void);
 
 	/**
-	* Construct a DiffServ
+	* Construct a TrafficClass
 	*
 	* This is the constructor for the Diffserv.  It takes as a
 	* parameter a pointer to the Node to which this device is connected, 
