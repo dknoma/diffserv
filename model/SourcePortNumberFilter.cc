@@ -82,9 +82,11 @@ SourcePortNumberFilter::Match (Ptr<ns3::Packet> packet)
   // }
   std::cout << "checking address...\n";
   uint32_t srcPort = header.GetSourcePort();
-  std::cout << "src: " << srcPort << "\n";
+  bool matches = srcPort == value;
+  std::cout << "src port: " << srcPort << " vs value: " << value << "\tmatches: "<< matches << "\n";
   return srcPort == value;
 }
+
 void 
 SourcePortNumberFilter::SetPort (uint32_t port)
 {

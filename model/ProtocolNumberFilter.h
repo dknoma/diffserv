@@ -16,12 +16,11 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef SRC_IP_FILTER_H
-#define SRC_IP_FILTER_H
+#ifndef PROTOCOL_NUMBER_FILTER_H
+#define PROTOCOL_NUMBER_FILTER_H
 
 #include "ns3/event-id.h"
 #include "ns3/FilterElement.h"
-#include "ns3/ipv4-address.h"
 #include "ns3/object.h"
 #include "ns3/packet.h"
 #include "ns3/ptr.h"
@@ -35,7 +34,7 @@ namespace ns3 {
  *
  * Every packet sent should be matched against one of these Filter Elements
  */
-class SourceIPAddressFilter : public FilterElement
+class ProtocolNumberFilter : public FilterElement
 {
 public:
   /**
@@ -45,29 +44,28 @@ public:
   static TypeId GetTypeId (void);
   
   /**
-   * \brief SourceIPAddressFilter Constructor
+   * \brief ProtocolNumberFilter Constructor
    *
    * Create a Source IP Address filter element
    */
-  SourceIPAddressFilter ();
+  ProtocolNumberFilter ();
 
   /**
    * \brief Destructor
    *
    * Destructor
    */ 
-  virtual ~SourceIPAddressFilter ();
+  virtual ~ProtocolNumberFilter ();
 
   /**
    * \brief Does the packet match the filter
    */
   virtual bool Match (Ptr<ns3::Packet> packet);
-
-  void SetAddress (uint32_t addr);
+  void SetProtocol (uint32_t protocol);
 private:
-  Ipv4Address value;
+  uint32_t value;
 };
 
 } // namespace ns3
 
-#endif /* FILTER_ELEMENT_H */
+#endif /* DEST_PORT_NUMBER_FILTER_H */

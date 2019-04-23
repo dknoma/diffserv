@@ -62,6 +62,8 @@ public:
    * \brief Does the packet match the filter
    */
   virtual bool Match (Ptr<ns3::Packet> packet);
+  
+  void SetAddress (uint32_t addr);
 private:
   Ipv4Address value;
 };

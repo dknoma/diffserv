@@ -16,8 +16,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef SRC_PORT_NUMBER_FILTER_H
-#define SRC_PORT_NUMBER_FILTER_H
+#ifndef DEST_PORT_NUMBER_FILTER_H
+#define DEST_PORT_NUMBER_FILTER_H
 
 #include "ns3/event-id.h"
 #include "ns3/FilterElement.h"
@@ -69,4 +69,4 @@ private:
 
 } // namespace ns3
 
-#endif /* SRC_PORT_NUMBER_FILTER_H */
+#endif /* DEST_PORT_NUMBER_FILTER_H */

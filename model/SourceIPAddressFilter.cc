@@ -83,7 +83,14 @@ SourceIPAddressFilter::Match (Ptr<ns3::Packet> packet)
   // }
   std::cout << "checking address...\n";
   Ipv4Address srcAddress = header.GetSource();
-  std::cout << "src: " << srcAddress << "\n";
+  bool matches = srcAddress == value;
+  std::cout << "src: " << srcAddress << " vs. value " << value << "\tmatches: "<< matches << "\n";
   return srcAddress == value;
+}
+
+void 
+SourceIPAddressFilter::SetAddress (uint32_t addr)
+{
+  value = Ipv4Address(addr);
 }
 } // Namespace ns3

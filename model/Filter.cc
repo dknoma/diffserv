@@ -73,8 +73,8 @@ Filter::Match (Ptr<ns3::Packet> packet)
   // for (std::vector<FilterElement*>::iterator i = elements.begin(); i != elements.end(); ++i)
   for(uint32_t i = 0; i < elements.size(); i++)
   {
-    std::cout << "filter element[" << i << "]\n";
-    matching = elements.at(i) -> Match(packet);
+    // std::cout << "filter element[" << i << "]\n";
+    matching = matching || elements.at(i) -> Match(packet); // Matches at least one of the filter elements
   }
   return matching;
 }
