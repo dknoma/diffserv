@@ -67,14 +67,15 @@ ProtocolNumberFilter::Match (Ptr<ns3::Packet> packet)
 {
   NS_LOG_FUNCTION (this << packet);
   // std::cout << "THIS IS A PROTOCOL NUMBER FILTER ELEMENT\n";
-  if (packet->GetSize() == 0)
+  Ptr<ns3::Packet> copy = packet->Copy();
+  if (copy->GetSize() == 0)
   {
     std::cout << "empty packet...\n";
     return false;
   }
   Ipv4Header header;
   std::cout << "peeking header...\n";
-  packet->PeekHeader(header); // Get the udp header from the packet
+  copy->PeekHeader(header); // Get the udp header from the packet
   std::cout << "checking protocol...\n";
   uint32_t protocol = header.GetProtocol();
   bool matches = protocol == value;
