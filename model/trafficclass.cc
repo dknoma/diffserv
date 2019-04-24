@@ -52,6 +52,18 @@ void TrafficClass<Item>::SetWeight(double w)
 }
 
 template <typename Item>
+bool TrafficClass<Item>::GetIsDefault()
+{
+	return this -> isDefault;
+}
+
+template <typename Item>
+void TrafficClass<Item>::SetIsDefault(bool p)
+{
+	this -> isDefault = p;
+}
+
+template <typename Item>
 void TrafficClass<Item>::AddFilter(Filter *f)
 {
 	this -> filters.push_back(f);
@@ -73,8 +85,9 @@ template <typename Item>
 bool TrafficClass<Item>::match(Ptr<Item> T)
 {
 	/* Check filter to see if packet matches */
-	
-
+	for(std::vector<Filter*>::size_type i = 0; i != this -> filters.size(); i++) {
+    	filters[i] -> Match(T);
+	}
 	/* Add to internal queue if it's a match */
 
 	/* And return true if it's a match */

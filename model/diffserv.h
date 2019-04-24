@@ -21,7 +21,7 @@ template <typename Item>
 class DiffServ : public DropTailQueue<Item>
 {
 public:
-
+	std::vector<TrafficClass<Packet>*> q_class;
 	/**
 	* \brief Get the TypeId
 	*

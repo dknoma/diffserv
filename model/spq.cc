@@ -28,15 +28,61 @@ TypeId Spq::GetTypeId (void) {
 	return tid;
 };
 
+/* Enqueue in the High Priority Queue if it's a match I imagine */
 bool Spq::DoEnqueue(Ptr<Packet> T) {
 	/* Figure out which traffic class to add this to */
+	/* So loop through our filters, and figure out which queue to put this in */
+	bool matching = false;
+	for(std::vector<Packet>::size_type i = 0; i != this -> Spq::q_class.size(); i++) {
+    	matching = Spq::q_class[i] -> match(T);
+    	if (matching == true) {
+    		this -> Spq::q_class[i] -> Enqueue(T);
+    	}
+	}
+
+	/* So there are no matches, so loop through again and put into default queue */
+	bool isDefault;
+	for(std::vector<Packet>::size_type i = 0; i != this -> Spq::q_class.size(); i++) {
+    	isDefault = Spq::q_class[i] -> GetIsDefault();
+    	if (isDefault == true) {
+    		return this -> Spq::q_class[i] -> Enqueue(T);
+    	}
+	}
+
+	/* Place here to avoid error for now but need to refactor above code */
 	return this -> Enqueue(T);
 };
 
 
-/* Remove next packet from queue */
+/* Remove next packet from queue. Not a good way to do it atm. */
 Ptr<Packet> Spq::DoDequeue(void) {
-	return this -> Dequeue ();
+	/* Iterate through the vectors. If high priority vector is not empty 
+	dequeue from that one. Else dequeue from the other one */
+	uint32_t priority;
+	for(std::vector<Packet>::size_type i = 0; i != this -> Spq::q_class.size(); i++) {
+    	priority = Spq::q_class[i] -> GetPriorityLevel();
+    	/* 1 or 0, not sure */
+    	if (priority == 1) {
+    		/* If the high priority queue is empty */
+    		if (Spq::q_class[i] -> packets == 0) {
+    			/* Get first packet available from other non-empty queues */
+    			for(std::vector<Packet>::size_type z = 0; z != this -> Spq::q_class.size(); z++) {
+    				if (Spq::q_class[z] -> packets != 0) {
+    					return this -> Spq::q_class[z] -> Dequeue ();
+    				}
+    			}
+    		} else {
+    			/* Not empty so dequeue the high priority packet */
+    			return this -> Spq::q_class[i] -> Dequeue ();
+    		}
+    	} else {
+    		/* Keep going through the loop until we get to the high priority queue */
+    		continue;
+    	}
+	}
+	/* Never came across the high priority queue */
+	return this -> spq::q_class[0] -> Dequeue();
+	
 };
 
 /* Get most recent Packet but do not remove */

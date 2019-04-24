@@ -42,6 +42,9 @@ public:
 	uint32_t GetPriorityLevel(void);
 	void SetPriorityLevel(uint32_t p);
 
+	bool GetIsDefault(void);
+	void SetIsDefault(bool p);
+
 	double GetWeight(void);
 	void SetWeight(double w);
 
