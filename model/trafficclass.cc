@@ -28,15 +28,27 @@ TrafficClass<Item>::~TrafficClass ()
 }
 
 template <typename Item>
-uint32_t TrafficClass<Item>::GetPriorityLevel()
+int TrafficClass<Item>::GetPriorityLevel()
 {
 	return this -> priority_level;
 }
 
 template <typename Item>
-void TrafficClass<Item>::SetPriorityLevel(uint32_t p)
+void TrafficClass<Item>::SetPriorityLevel(int p)
 {
 	this -> priority_level = p;
+}
+
+template <typename Item>
+uint32_t TrafficClass<Item>::GetPackets()
+{
+	return this -> packets;
+}
+
+template <typename Item>
+void TrafficClass<Item>::SetPackets(uint32_t p)
+{
+	this -> packets = p;
 }
 
 template <typename Item>
@@ -85,8 +97,10 @@ template <typename Item>
 bool TrafficClass<Item>::match(Ptr<Item> T)
 {
 	/* Check filter to see if packet matches */
+	bool matching = false;
 	for(std::vector<Filter*>::size_type i = 0; i != this -> filters.size(); i++) {
-    	filters[i] -> Match(T);
+    	matching = filters[i] -> Match(T);
+    	std::cout << matching << std::endl;
 	}
 	/* Add to internal queue if it's a match */
 

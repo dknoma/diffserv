@@ -67,6 +67,11 @@ uint32_t DiffServ<Item>::GetMode(void) {
 	return DiffServ<Item>::m_mode;
 };
 
+template <typename Item>
+void DiffServ<Item>::AddTrafficClass(TrafficClass<Item>* traffic) {
+	this -> q_class.push_back(traffic);
+};
+
 
 /* Utilizes filter aspect to sort the traffic packets into
 appropriate traffic queues. */

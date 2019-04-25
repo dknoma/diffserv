@@ -39,8 +39,11 @@ public:
 	*/
 	virtual ~TrafficClass ();
 	/* Getters and Setters for Priority Level and Weights */
-	uint32_t GetPriorityLevel(void);
-	void SetPriorityLevel(uint32_t p);
+	int GetPriorityLevel(void);
+	void SetPriorityLevel(int p);
+
+	uint32_t GetPackets(void);
+	void SetPackets(uint32_t p);
 
 	bool GetIsDefault(void);
 	void SetIsDefault(bool p);
@@ -70,7 +73,7 @@ private:
 	double weight;
 
 	/* Applicable is QOS uses priority level, SPQ */
-	uint32_t priority_level;
+	int priority_level;
 	/* One queue that will take over the packets if packet comes in and 
 	does not match any of the other classes */
 	bool isDefault;

@@ -28,7 +28,18 @@ TypeId Drr::GetTypeId (void) {
 	return tid;
 };
 
+/* Enqueue based on weight. Need to do the calculation */
+
 bool Drr::DoEnqueue(Ptr<Packet> T) {
+	/* This is the first part of SPQ. This is only a placeholder */
+	/* TODO: Figure out how DRR uses weight */
+	bool matching = false;
+	for(std::vector<Packet>::size_type i = 0; i != this -> Drr::q_class.size(); i++) {
+    	matching = Drr::q_class[i] -> match(T);
+    	if (matching == true) {
+    		return this -> Drr::q_class[i] -> Enqueue(T);
+    	}
+	}
 	return this -> Enqueue(T);
 };
 

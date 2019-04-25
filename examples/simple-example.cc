@@ -57,22 +57,37 @@ main (int argc, char *argv[])
   queues = j["numberOfQueues"].get<std::string>();
   queue1Priority = j["queue1Priority"].get<std::string>();
   queue2Priority = j["queue2Priority"].get<std::string>();
+
   std::string dataRate (std::to_string(4));
   std::cout << "here" << "\n";
   std::cout << queues << "\n";
   std::cout << queue1Priority << "\n";
   std::cout << queue2Priority << "\n";
 
-  /* Instantiate diffserv, traffic class, filters */
+  /* Test SPQ here. Instantiate diffserv, traffic class, filters */
   Ptr<Packet> packet = Create<Packet>();
   Spq spq;
-  Drr drr;
-  spq.DoEnqueue(packet);
-  spq.DoDequeue();
-  TrafficClass<Packet> traffic;
+  TrafficClass<Packet> *trafficClassPointer1 = new TrafficClass<Packet>();
+  TrafficClass<Packet> *trafficClassPointer2 = new TrafficClass<Packet>();
+
+  /* Set each queue's priority level */
+  int queue1PriorityInt = std::stoi(queue1Priority);
+  int queue2PriorityInt = std::stoi(queue2Priority);
+  trafficClassPointer1 -> SetPriorityLevel(queue1PriorityInt);
+  trafficClassPointer2 -> SetPriorityLevel(queue2PriorityInt);
+  spq.AddTrafficClass(trafficClassPointer1);
+  spq.AddTrafficClass(trafficClassPointer2);
   Filter filter;
   Filter *filter_p = new Filter(filter);
-  traffic.AddFilter(filter_p);
+  Filter filter2;
+  Filter *filter_p2 = new Filter(filter2);
+  trafficClassPointer1 -> AddFilter(filter_p);
+  trafficClassPointer2 -> AddFilter(filter_p2);
+  spq.DoEnqueue(packet);
+  spq.DoDequeue();
+
+  Drr drr;
+
   /* Create packet */
   /* Filter packet into correct queue */
 

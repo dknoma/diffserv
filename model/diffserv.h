@@ -48,6 +48,7 @@ public:
 	/* Required Methods */
 
 	/* This queue will be true for whole vector of traffic classes */
+	void AddTrafficClass(TrafficClass<Item>* traffic);
 	void SetMode(uint32_t mode);
 	uint32_t GetMode();
 	bool DoEnqueue(Ptr<Item> T);

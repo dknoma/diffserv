@@ -64,10 +64,10 @@ Ptr<Packet> Spq::DoDequeue(void) {
     	/* 1 or 0, not sure */
     	if (priority == 1) {
     		/* If the high priority queue is empty */
-    		if (Spq::q_class[i] -> packets == 0) {
+    		if (Spq::q_class[i] -> GetPackets() == 0) {
     			/* Get first packet available from other non-empty queues */
     			for(std::vector<Packet>::size_type z = 0; z != this -> Spq::q_class.size(); z++) {
-    				if (Spq::q_class[z] -> packets != 0) {
+    				if (Spq::q_class[z] -> GetPackets() != 0) {
     					return this -> Spq::q_class[z] -> Dequeue ();
     				}
     			}
@@ -81,7 +81,7 @@ Ptr<Packet> Spq::DoDequeue(void) {
     	}
 	}
 	/* Never came across the high priority queue */
-	return this -> spq::q_class[0] -> Dequeue();
+	return NULL;
 	
 };
 
