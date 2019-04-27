@@ -66,16 +66,18 @@ SourceIPAddressFilter::~SourceIPAddressFilter()
 bool 
 SourceIPAddressFilter::Match (Ptr<ns3::Packet> packet)
 {
+  // TODO: check headers. only checking first header rather than all of them even tho they exist.
   NS_LOG_FUNCTION (this << packet);
-  std::cout << "THIS IS A SOURCE IP ADDRESS FILTER ELEMENT\n";
-  if (packet->GetSize() == 0)
+  // std::cout << "THIS IS A SOURCE IP ADDRESS FILTER ELEMENT\n";
+  Ptr<ns3::Packet> copy = packet->Copy();
+  if (copy->GetSize() == 0)
   {
     std::cout << "empty packet...\n";
     return false;
   }
   Ipv4Header header;
   std::cout << "peeking header...\n";
-  packet->PeekHeader(header); // Get the IPv4 header from the packet
+  copy->PeekHeader(header); // Get the IPv4 header from the packet
   // if (header)
   // {
   //   std::cout << "header was null\n";
@@ -83,7 +85,20 @@ SourceIPAddressFilter::Match (Ptr<ns3::Packet> packet)
   // }
   std::cout << "checking address...\n";
   Ipv4Address srcAddress = header.GetSource();
-  std::cout << "src: " << srcAddress << "\n";
+  bool matches = srcAddress == value;
+  std::cout << "src: " << srcAddress << " vs. value " << value << "\tmatches: "<< matches << "\n";
   return srcAddress == value;
+}
+
+void 
+SourceIPAddressFilter::SetAddress (uint32_t addr)
+{
+  value = Ipv4Address(addr);
+}
+
+void 
+SourceIPAddressFilter::SetAddress (char const *addr)
+{
+  value = Ipv4Address(addr);
 }
 } // Namespace ns3

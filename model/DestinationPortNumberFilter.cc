@@ -19,6 +19,7 @@
 #include "ns3/packet.h"
 #include "ns3/uinteger.h"
 #include "ns3/trace-source-accessor.h"
+#include "ns3/ipv4-header.h"
 #include "ns3/udp-header.h"
 #include "DestinationPortNumberFilter.h"
 #include <chrono>
@@ -66,20 +67,27 @@ bool
 DestinationPortNumberFilter::Match (Ptr<ns3::Packet> packet)
 {
   NS_LOG_FUNCTION (this << packet);
-  std::cout << "THIS IS A DESTINATION PORT FILTER ELEMENT\n";
-  if (packet->GetSize() == 0)
+  // std::cout << "THIS IS A DESTINATION PORT FILTER ELEMENT\n";
+  Ptr<ns3::Packet> copy = packet->Copy();
+  if (copy->GetSize() == 0)
   {
     std::cout << "empty packet...\n";
     return false;
   }
+  // Remove Ipv4Header
+  Ipv4Header removedHeader;
+  copy->RemoveHeader(removedHeader);
+  // Get UDP header
   UdpHeader header;
-  std::cout << "peeking header...\n";
-  packet->PeekHeader(header); // Get the udp header from the packet
-  std::cout << "checking address...\n";
+  // std::cout << "peeking header...\n";
+  copy->PeekHeader(header); // Get the udp header from the packet
+  // std::cout << "checking address...\n";
   uint32_t destPort = header.GetDestinationPort();
-  std::cout << "src: " << destPort << "\n";
+  bool matches = destPort == value;
+  std::cout << "dest port: " << destPort << " vs value: " << value << "\tmatches: "<< matches << "\n";
   return destPort == value;
 }
+
 void 
 DestinationPortNumberFilter::SetPort (uint32_t port)
 {

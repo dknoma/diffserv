@@ -15,16 +15,17 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+#include "ns3/ipv4-address.h"
+#include "ns3/ipv4-header.h"
 #include "ns3/log.h"
 #include "ns3/packet.h"
 #include "ns3/uinteger.h"
 #include "ns3/trace-source-accessor.h"
-#include "ns3/ipv4-header.h"
-#include "ns3/udp-header.h"
-#include "SourcePortNumberFilter.h"
+#include "SourceMaskFilter.h"
 #include <chrono>
 #include <thread>
 #include <iostream>
+#include <math.h>
 #include <unistd.h>
 #include <fcntl.h>
 #include <fstream>
@@ -32,56 +33,49 @@
 
 namespace ns3 {
 
-NS_LOG_COMPONENT_DEFINE ("SourcePortNumberFilter");
+NS_LOG_COMPONENT_DEFINE ("SourceMaskFilter");
 
-// NS_OBJECT_ENSURE_REGISTERED (SourcePortNumberFilter);
+NS_OBJECT_ENSURE_REGISTERED (SourceMaskFilter);
 
 TypeId
-SourcePortNumberFilter::GetTypeId (void)
+SourceMaskFilter::GetTypeId (void)
 {
-  static TypeId tid = TypeId ("ns3::SourcePortNumberFilter")
-    .SetParent<FilterElement> ()
+  static TypeId tid = TypeId ("ns3::SourceMaskFilter")
+    .SetParent<Object> ()
     .SetGroupName("DiffServ")
-    .AddAttribute("Port",
-                   "Source port number",
-                   UintegerValue (6666),
-                   MakeUintegerAccessor (&SourcePortNumberFilter::value),
-                   MakeUintegerChecker<uint32_t> ())
+    .AddAttribute ("Value",
+                   "Filter element value",
+                   Ipv4MaskValue (Ipv4Mask ()),
+                   MakeIpv4MaskAccessor (&SourceMaskFilter::value),
+                   MakeIpv4MaskChecker ())
   ;
   return tid;
 }
 
 // Constructors
-SourcePortNumberFilter::SourcePortNumberFilter ()
+SourceMaskFilter::SourceMaskFilter ()
 {
   NS_LOG_FUNCTION (this);
 }
 
-SourcePortNumberFilter::~SourcePortNumberFilter()
+SourceMaskFilter::~SourceMaskFilter()
 {
 
   NS_LOG_FUNCTION (this);
 }
 
 bool 
-SourcePortNumberFilter::Match (Ptr<ns3::Packet> packet)
+SourceMaskFilter::Match (Ptr<ns3::Packet> packet)
 {
   NS_LOG_FUNCTION (this << packet);
-  // std::cout << "THIS IS A SOURCE PORT FILTER ELEMENT\n";
+  // std::cout << "THIS IS A DESTINATION IP ADDRESS FILTER ELEMENT\n";
   Ptr<ns3::Packet> copy = packet->Copy();
   if (copy->GetSize() == 0)
   {
     std::cout << "empty packet...\n";
     return false;
   }
-  // Remove Ipv4Header
-  Ipv4Header removedHeader;
-  copy->RemoveHeader(removedHeader);
-
-  packet->Print(std::cout);
-  std::cout << "\n";
-  // Get UDP header
-  UdpHeader header;
+  Ipv4Header header;
   // std::cout << "peeking header...\n";
   copy->PeekHeader(header); // Get the IPv4 header from the packet
   // if (header)
@@ -90,15 +84,26 @@ SourcePortNumberFilter::Match (Ptr<ns3::Packet> packet)
   //   return false;
   // }
   // std::cout << "checking address...\n";
-  uint32_t srcPort = header.GetSourcePort();
-  bool matches = srcPort == value;
-  std::cout << "src port: " << srcPort << " vs value: " << value << "\tmatches: "<< matches << "\n";
-  return srcPort == value;
+  Ipv4Address srcAddress = header.GetSource();
+  uint32_t srcBits = srcAddress.Get();
+  uint16_t maskPrefixLength = value.GetPrefixLength();
+  uint32_t lowerAddrRange = value.Get();
+  uint32_t upperAddrRange = lowerAddrRange + (pow(2, 32-maskPrefixLength) - 1);
+  bool matches = (srcBits >= lowerAddrRange) && (srcBits <= upperAddrRange);
+  std::cout << "dest MASK: " << value << " [prefix length] " << maskPrefixLength << " [addr bits] " << lowerAddrRange << " [matches?] " << matches 
+  << " [upper range] " << upperAddrRange << "\n";
+  return matches;
 }
 
 void 
-SourcePortNumberFilter::SetPort (uint32_t port)
+SourceMaskFilter::SetMask (uint32_t mask)
 {
-  value = port;
+  value = Ipv4Mask(mask);
+}
+
+void 
+SourceMaskFilter::SetMask (char const *mask)
+{
+  value = Ipv4Mask(mask);
 }
 } // Namespace ns3

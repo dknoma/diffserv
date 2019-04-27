@@ -67,23 +67,37 @@ bool
 DestinationIPAddressFilter::Match (Ptr<ns3::Packet> packet)
 {
   NS_LOG_FUNCTION (this << packet);
-  std::cout << "THIS IS A SOURCE IP ADDRESS FILTER ELEMENT\n";
-  if (packet->GetSize() == 0)
+  // std::cout << "THIS IS A DESTINATION IP ADDRESS FILTER ELEMENT\n";
+  Ptr<ns3::Packet> copy = packet->Copy();
+  if (copy->GetSize() == 0)
   {
     std::cout << "empty packet...\n";
     return false;
   }
   Ipv4Header header;
   std::cout << "peeking header...\n";
-  packet->PeekHeader(header); // Get the IPv4 header from the packet
+  copy->PeekHeader(header); // Get the IPv4 header from the packet
   // if (header)
   // {
   //   std::cout << "header was null\n";
   //   return false;
   // }
   std::cout << "checking address...\n";
-  Ipv4Address srcAddress = header.GetDestination();
-  std::cout << "src: " << srcAddress << "\n";
-  return srcAddress == value;
+  Ipv4Address destAddress = header.GetDestination();
+  bool matches = destAddress == value;
+  std::cout << "dest: " << destAddress << " vs. value: " << value << "\tmatches: "<< matches << "\n";
+  return destAddress == value;
+}
+
+void 
+DestinationIPAddressFilter::SetAddress (uint32_t addr)
+{
+  value = Ipv4Address(addr);
+}
+
+void 
+DestinationIPAddressFilter::SetAddress (char const *addr)
+{
+  value = Ipv4Address(addr);
 }
 } // Namespace ns3

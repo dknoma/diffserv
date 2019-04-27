@@ -24,6 +24,9 @@ def build(bld):
         'model/udp-app-client.cc',
         'model/spq.cc',
         'model/drr.cc',
+        'model/ProtocolNumberFilter.cc',
+        'model/DestinationMaskFilter.cc',
+        'model/SourceMaskFilter.cc',
         ]
 
     module_test = bld.create_ns3_module_test_library('project2')
@@ -48,6 +51,9 @@ def build(bld):
         'model/udp-app-client.h',
         'model/spq.h',
         'model/drr.h',
+        'model/ProtocolNumberFilter.h',
+        'model/DestinationMaskFilter.h',
+        'model/SourceMaskFilter.h',
         ]
     if bld.env.ENABLE_EXAMPLES:
         bld.recurse('examples')

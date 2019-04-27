@@ -20,8 +20,7 @@
 #include "ns3/uinteger.h"
 #include "ns3/trace-source-accessor.h"
 #include "ns3/ipv4-header.h"
-#include "ns3/udp-header.h"
-#include "SourcePortNumberFilter.h"
+#include "ProtocolNumberFilter.h"
 #include <chrono>
 #include <thread>
 #include <iostream>
@@ -32,73 +31,61 @@
 
 namespace ns3 {
 
-NS_LOG_COMPONENT_DEFINE ("SourcePortNumberFilter");
+NS_LOG_COMPONENT_DEFINE ("ProtocolNumberFilter");
 
-// NS_OBJECT_ENSURE_REGISTERED (SourcePortNumberFilter);
+// NS_OBJECT_ENSURE_REGISTERED (ProtocolNumberFilter);
 
 TypeId
-SourcePortNumberFilter::GetTypeId (void)
+ProtocolNumberFilter::GetTypeId (void)
 {
-  static TypeId tid = TypeId ("ns3::SourcePortNumberFilter")
+  static TypeId tid = TypeId ("ns3::ProtocolNumberFilter")
     .SetParent<FilterElement> ()
     .SetGroupName("DiffServ")
-    .AddAttribute("Port",
-                   "Source port number",
-                   UintegerValue (6666),
-                   MakeUintegerAccessor (&SourcePortNumberFilter::value),
+    .AddAttribute("Protocol",
+                   "Protocol number",
+                   UintegerValue (32),
+                   MakeUintegerAccessor (&ProtocolNumberFilter::value),
                    MakeUintegerChecker<uint32_t> ())
   ;
   return tid;
 }
 
 // Constructors
-SourcePortNumberFilter::SourcePortNumberFilter ()
+ProtocolNumberFilter::ProtocolNumberFilter ()
 {
   NS_LOG_FUNCTION (this);
 }
 
-SourcePortNumberFilter::~SourcePortNumberFilter()
+ProtocolNumberFilter::~ProtocolNumberFilter()
 {
 
   NS_LOG_FUNCTION (this);
 }
 
 bool 
-SourcePortNumberFilter::Match (Ptr<ns3::Packet> packet)
+ProtocolNumberFilter::Match (Ptr<ns3::Packet> packet)
 {
   NS_LOG_FUNCTION (this << packet);
-  // std::cout << "THIS IS A SOURCE PORT FILTER ELEMENT\n";
+  // std::cout << "THIS IS A PROTOCOL NUMBER FILTER ELEMENT\n";
   Ptr<ns3::Packet> copy = packet->Copy();
   if (copy->GetSize() == 0)
   {
     std::cout << "empty packet...\n";
     return false;
   }
-  // Remove Ipv4Header
-  Ipv4Header removedHeader;
-  copy->RemoveHeader(removedHeader);
-
-  packet->Print(std::cout);
-  std::cout << "\n";
-  // Get UDP header
-  UdpHeader header;
+  Ipv4Header header;
   // std::cout << "peeking header...\n";
-  copy->PeekHeader(header); // Get the IPv4 header from the packet
-  // if (header)
-  // {
-  //   std::cout << "header was null\n";
-  //   return false;
-  // }
-  // std::cout << "checking address...\n";
-  uint32_t srcPort = header.GetSourcePort();
-  bool matches = srcPort == value;
-  std::cout << "src port: " << srcPort << " vs value: " << value << "\tmatches: "<< matches << "\n";
-  return srcPort == value;
+  copy->PeekHeader(header); // Get the udp header from the packet
+  // std::cout << "checking protocol...\n";
+  uint32_t protocol = header.GetProtocol();
+  bool matches = protocol == value;
+  std::cout << "protocol: " << protocol << " vs value: " << value << "\tmatches: "<< matches << "\n";
+  return protocol == value;
 }
 
 void 
-SourcePortNumberFilter::SetPort (uint32_t port)
+ProtocolNumberFilter::SetProtocol (uint32_t protocol)
 {
-  value = port;
+  value = protocol;
 }
 } // Namespace ns3

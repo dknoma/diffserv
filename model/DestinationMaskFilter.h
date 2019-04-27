@@ -16,8 +16,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef DEST_PORT_NUMBER_FILTER_H
-#define DEST_PORT_NUMBER_FILTER_H
+#ifndef DEST_MASK_FILTER_H
+#define DEST_MASK_FILTER_H
 
 #include "ns3/event-id.h"
 #include "ns3/FilterElement.h"
@@ -35,7 +35,7 @@ namespace ns3 {
  *
  * Every packet sent should be matched against one of these Filter Elements
  */
-class DestinationPortNumberFilter : public FilterElement
+class DestinationMaskFilter : public FilterElement
 {
 public:
   /**
@@ -45,28 +45,30 @@ public:
   static TypeId GetTypeId (void);
   
   /**
-   * \brief DestinationPortNumberFilter Constructor
+   * \brief DestinationMaskFilter Constructor
    *
-   * Create a Source IP Address filter element
+   * Create a Source IP Mask filter element
    */
-  DestinationPortNumberFilter ();
+  DestinationMaskFilter ();
 
   /**
    * \brief Destructor
    *
    * Destructor
    */ 
-  virtual ~DestinationPortNumberFilter ();
+  virtual ~DestinationMaskFilter ();
 
   /**
    * \brief Does the packet match the filter
    */
   virtual bool Match (Ptr<ns3::Packet> packet);
-  void SetPort (uint32_t port);
+
+  void SetMask (uint32_t mask);
+  void SetMask (char const *mask);
 private:
-  uint32_t value;
+  Ipv4Mask value;
 };
 
 } // namespace ns3
 
-#endif /* DEST_PORT_NUMBER_FILTER_H */
+#endif /* FILTER_ELEMENT_H */
