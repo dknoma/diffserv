@@ -79,9 +79,9 @@ DestinationPortNumberFilter::Match (Ptr<ns3::Packet> packet)
   copy->RemoveHeader(removedHeader);
   // Get UDP header
   UdpHeader header;
-  std::cout << "peeking header...\n";
+  // std::cout << "peeking header...\n";
   copy->PeekHeader(header); // Get the udp header from the packet
-  std::cout << "checking address...\n";
+  // std::cout << "checking address...\n";
   uint32_t destPort = header.GetDestinationPort();
   bool matches = destPort == value;
   std::cout << "dest port: " << destPort << " vs value: " << value << "\tmatches: "<< matches << "\n";

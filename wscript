@@ -19,6 +19,8 @@ def build(bld):
         'model/SourcePortNumberFilter.cc',
         'model/DestinationPortNumberFilter.cc',
         'model/ProtocolNumberFilter.cc',
+        'model/DestinationMaskFilter.cc',
+        'model/SourceMaskFilter.cc',
         ]
 
     module_test = bld.create_ns3_module_test_library('project2')
@@ -38,6 +40,8 @@ def build(bld):
         'model/SourcePortNumberFilter.h',
         'model/DestinationPortNumberFilter.h',
         'model/ProtocolNumberFilter.h',
+        'model/DestinationMaskFilter.h',
+        'model/SourceMaskFilter.h',
         ]
     module.use.append("ZLIB1G")
     if bld.env.ENABLE_EXAMPLES:

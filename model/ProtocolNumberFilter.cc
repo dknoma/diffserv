@@ -74,9 +74,9 @@ ProtocolNumberFilter::Match (Ptr<ns3::Packet> packet)
     return false;
   }
   Ipv4Header header;
-  std::cout << "peeking header...\n";
+  // std::cout << "peeking header...\n";
   copy->PeekHeader(header); // Get the udp header from the packet
-  std::cout << "checking protocol...\n";
+  // std::cout << "checking protocol...\n";
   uint32_t protocol = header.GetProtocol();
   bool matches = protocol == value;
   std::cout << "protocol: " << protocol << " vs value: " << value << "\tmatches: "<< matches << "\n";
