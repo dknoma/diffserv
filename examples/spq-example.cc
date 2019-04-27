@@ -25,7 +25,7 @@ using json = nlohmann::json;
 int 
 main (int argc, char *argv[])
 {
-	std::string pathToConfigFile = "";
+  std::string pathToConfigFile = "config.json";
 	std::string queues = "";
 	std::string queue1Priority = "";
 	std::string queue2Priority = "";
@@ -35,11 +35,12 @@ main (int argc, char *argv[])
   Address udpServerInterfaces;
   Address p2pInterfaces;
 
+if (argc != 0) {
   CommandLine cmd;
   cmd.AddValue ("verbose", "Tell application to log if true", verbose);
 	cmd.AddValue ("config", "Config File", pathToConfigFile);
   cmd.Parse (argc,argv);
-
+}
   // Read config file; take inputstream from the file and put it all in json j
   std::ifstream jsonIn(pathToConfigFile);
   json j;

@@ -18,13 +18,13 @@ TypeId TrafficClass<Item>::GetTypeId (void) {
 template <typename Item>
 TrafficClass<Item>::TrafficClass()
 {
-  NS_LOG_FUNCTION (this);
+
 }
 
 template <typename Item>
 TrafficClass<Item>::~TrafficClass ()
 {
-  NS_LOG_FUNCTION (this);
+
 }
 
 template <typename Item>

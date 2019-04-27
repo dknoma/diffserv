@@ -10,12 +10,12 @@ NS_LOG_COMPONENT_DEFINE ("Spq");
 
 Spq::Spq()
 {
-  NS_LOG_FUNCTION (this);
+
 }
 
 Spq::~Spq ()
 {
-  NS_LOG_FUNCTION (this);
+
 }
 /* The QueueMode specifies whether service is in byte mode or packet mode */
 

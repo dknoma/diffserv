@@ -18,13 +18,13 @@ class. Maybe even a boolean but more flexible as a class right now. */
 template <typename Item>
 DiffServ<Item>::DiffServ()
 {
-  NS_LOG_FUNCTION (this);
+
 }
 
 template <typename Item>
 DiffServ<Item>::~DiffServ ()
 {
-  NS_LOG_FUNCTION (this);
+
 }
 
 /* For network queues, DoEnqueue() and DoDequeue() functions can be

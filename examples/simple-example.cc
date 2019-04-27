@@ -30,21 +30,26 @@ using json = nlohmann::json;
 int 
 main (int argc, char *argv[])
 {
-	std::string pathToConfigFile = "";
+  /* Default value for config file path */
+	std::string pathToConfigFile = "config.json";
 	std::string queues = "";
 	std::string queue1Priority = "";
 	std::string queue2Priority = "";
 
-  bool verbose = true;
   Address udpServerInterfaces;
   Address p2pInterfaces;
 
-  CommandLine cmd;
-  cmd.AddValue ("verbose", "Tell application to log if true", verbose);
-	cmd.AddValue ("config", "Config File", pathToConfigFile);
-  cmd.Parse (argc,argv);
+  std::cout << "Path" << "\n";
+  if (argc != 0) {
+    CommandLine cmd;
+  	cmd.AddValue ("config", "Config File", pathToConfigFile);
+    std::cout << pathToConfigFile << "\n";
+    cmd.Parse (argc,argv);
+  }
 
   // Read config file; take inputstream from the file and put it all in json j
+  std::cout << "Path" << "\n";
+  std::cout << pathToConfigFile << "\n";
   std::ifstream jsonIn(pathToConfigFile);
   json j;
   jsonIn >> j;
@@ -75,6 +80,8 @@ main (int argc, char *argv[])
   int queue2PriorityInt = std::stoi(queue2Priority);
   trafficClassPointer1 -> SetPriorityLevel(queue1PriorityInt);
   trafficClassPointer2 -> SetPriorityLevel(queue2PriorityInt);
+  std::cout << queue1PriorityInt << "\n";
+  std::cout << queue2PriorityInt << "\n";
   spq.AddTrafficClass(trafficClassPointer1);
   spq.AddTrafficClass(trafficClassPointer2);
   Filter filter;
@@ -85,7 +92,6 @@ main (int argc, char *argv[])
   trafficClassPointer2 -> AddFilter(filter_p2);
   spq.DoEnqueue(packet);
   spq.DoDequeue();
-
   Drr drr;
 
   /* Create packet */

@@ -7,7 +7,7 @@
 #     conf.check_nonfatal(header_name='stdint.h', define_name='HAVE_STDINT_H')
 
 def build(bld):
-    module = bld.create_ns3_module('project2', ['applications','core', 'internet', 'csma', 'config-store','stats', 'point-to-point'])
+    module = bld.create_ns3_module('project2', ['applications','core', 'internet', 'csma', 'config-store','stats', 'point-to-point','flow-monitor'])
     module.source = [
         'model/project2.cc',
         'model/Filter.cc',
@@ -49,7 +49,6 @@ def build(bld):
         'model/spq.h',
         'model/drr.h',
         ]
-    module.use.append("ZLIB1G")
     if bld.env.ENABLE_EXAMPLES:
         bld.recurse('examples')
 

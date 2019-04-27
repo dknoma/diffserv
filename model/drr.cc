@@ -9,12 +9,12 @@ NS_LOG_COMPONENT_DEFINE ("Drr");
 /* Constructor and Deconstructor */
 Drr::Drr()
 {
-  NS_LOG_FUNCTION (this);
+
 }
 
 Drr::~Drr ()
 {
-  NS_LOG_FUNCTION (this);
+
 }
 
 /* For network queues, DoEnqueue() and DoDequeue() functions can be
