@@ -71,7 +71,7 @@ main (int argc, char *argv[])
 
   /* Test SPQ here. Instantiate diffserv, traffic class, filters */
   Ptr<Packet> packet = Create<Packet>();
-  Spq spq;
+  Spq<Packet> spq;
   TrafficClass<Packet> *trafficClassPointer1 = new TrafficClass<Packet>();
   TrafficClass<Packet> *trafficClassPointer2 = new TrafficClass<Packet>();
 

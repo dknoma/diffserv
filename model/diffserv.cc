@@ -7,10 +7,7 @@
 
 namespace ns3 {
 NS_LOG_COMPONENT_DEFINE ("DiffServ");
-// NS_OBJECT_ENSURE_REGISTERED (DiffServ);
-
-/* Queuemode is an enum of queue in other versions. Should be able to work as a 
-class. Maybe even a boolean but more flexible as a class right now. */
+NS_OBJECT_TEMPLATE_CLASS_DEFINE (DiffServ, Packet);
 
  
 
@@ -30,10 +27,16 @@ DiffServ<Item>::~DiffServ ()
 /* For network queues, DoEnqueue() and DoDequeue() functions can be
 overwritten to meet implementation requirements for various QoS
 algorithms.  */
+
+/* static TypeId tid = TypeId ("ns3::DiffServ<Packet>") needs to have packet or else it can't be used in csma */
 template <typename Item>
 TypeId DiffServ<Item>::GetTypeId (void) {
-	static TypeId tid = TypeId ("ns3::DiffServ");
-	return tid;
+   static TypeId tid = TypeId ("ns3::DiffServ<Packet>")
+     .SetParent<DropTailQueue<Item> > ()
+     .SetGroupName ("DiffServ")
+     .template AddConstructor<DiffServ<Item>> ()
+   ;
+   return tid;
 };
 
 /* Take packet as input and add to queue. We will need
@@ -89,7 +92,7 @@ Ptr<Item> DiffServ<Item>::Schedule(void) {
 };
 
 /* Need these to say what types we can use in diffserv (Bytes and Packets) */
-template class DiffServ<Packet>;
+//template class DiffServ<Packet>;
 //template class DiffServ<uint32_t>;
 }
 

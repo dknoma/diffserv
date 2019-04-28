@@ -1,5 +1,7 @@
-/* -*- Mode:C++; c-file-style:"gnu"; indent-tabs-mode:nil; -*- */
+/* -*-  Mode: C++; c-file-style: "gnu"; indent-tabs-mode:nil; -*- */
 /*
+ * Copyright (c) 2008-2009 Strasbourg University
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as
  * published by the Free Software Foundation;
@@ -13,195 +15,196 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
+ * Author: David Gross <gdavid.devel@gmail.com>
+ *         Sebastien Vincent <vincent@clarinet.u-strasbg.fr>
  */
 
-//
 // Network topology
-//
-//  n0
-//     \ 5 Mb/s, 2ms
-//      \          1.5Mb/s, 10ms
-//       n2 -------------------------n3
-//      /
-//     / 5 Mb/s, 2ms
-//   n1
-//
-// - all links are point-to-point links with indicated one-way BW/delay
-// - CBR/UDP flows from n0 to n3, and from n3 to n1
-// - FTP/TCP flow from n0 to n3, starting at time 1.2 to time 1.35 sec.
-// - UDP packet size of 210 bytes, with per-packet interval 0.00375 sec.
-//   (i.e., DataRate of 448,000 bps)
-// - DropTail queues 
-// - Tracing of queues and packet receptions to file "simple-global-routing.tr"
+// //
+// //             n0   r    n1
+// //             |    _    |
+// //             ====|_|====
+// //                router
+// //
+// // - Tracing of queues and packet receptions to file "simple-routing-ping6.tr"
 
-#include <iostream>
 #include <fstream>
-#include <string>
-#include <cassert>
-
 #include "ns3/core-module.h"
-#include "ns3/network-module.h"
 #include "ns3/internet-module.h"
-#include "ns3/point-to-point-module.h"
+#include "ns3/csma-module.h"
+#include "ns3/internet-apps-module.h"
+#include "ns3/ipv6-static-routing-helper.h"
+
+#include "ns3/ipv6-routing-table-entry.h"
+#include "ns3/diffserv.h"
+#include "ns3/spq.h"
 #include "ns3/applications-module.h"
-#include "ns3/flow-monitor-helper.h"
-#include "ns3/ipv4-global-routing-helper.h"
+#include "ns3/internet-module.h"
+#include "ns3/udp-app-helper.h"
 #include <nlohmann/json.hpp>
+
 using namespace ns3;
 using json = nlohmann::json;
 
-NS_LOG_COMPONENT_DEFINE ("SimpleGlobalRoutingExample");
+NS_LOG_COMPONENT_DEFINE ("SimpleGlobalRoutingExamplep2");
 
-int 
-main (int argc, char *argv[])
+/**
+ * \class StackHelper
+ * \brief Helper to set or get some IPv6 information about nodes.
+ */
+class StackHelper
 {
-  // Users may find it convenient to turn on explicit debugging
-  // for selected modules; the below lines suggest how to do this
+public:
+
+  /**
+   * \brief Add an address to a IPv6 node.
+   * \param n node
+   * \param interface interface index
+   * \param address IPv6 address to add
+   */
+  inline void AddAddress (Ptr<Node>& n, uint32_t interface, Ipv6Address address)
+  {
+    Ptr<Ipv6> ipv6 = n->GetObject<Ipv6> ();
+    ipv6->AddAddress (interface, address);
+  }
+
+  /**
+   * \brief Print the routing table.
+   * \param n the node
+   */
+  inline void PrintRoutingTable (Ptr<Node>& n)
+  {
+    Ptr<Ipv6StaticRouting> routing = 0;
+    Ipv6StaticRoutingHelper routingHelper;
+    Ptr<Ipv6> ipv6 = n->GetObject<Ipv6> ();
+    uint32_t nbRoutes = 0;
+    Ipv6RoutingTableEntry route;
+
+    routing = routingHelper.GetStaticRouting (ipv6);
+
+    std::cout << "Routing table of " << n << " : " << std::endl;
+    std::cout << "Destination\t\t\t\t" << "Gateway\t\t\t\t\t" << "Interface\t" <<  "Prefix to use" << std::endl;
+
+    nbRoutes = routing->GetNRoutes ();
+    for (uint32_t i = 0; i < nbRoutes; i++)
+      {
+        route = routing->GetRoute (i);
+        std::cout << route.GetDest () << "\t"
+                  << route.GetGateway () << "\t"
+                  << route.GetInterface () << "\t"
+                  << route.GetPrefixToUse () << "\t"
+                  << std::endl;
+      }
+  }
+};
+
+int main (int argc, char** argv)
+{
 #if 0 
-  LogComponentEnable ("SimpleGlobalRoutingExample", LOG_LEVEL_INFO);
+  LogComponentEnable ("Ipv6L3Protocol", LOG_LEVEL_ALL);
+  LogComponentEnable ("Icmpv6L4Protocol", LOG_LEVEL_ALL);
+  LogComponentEnable ("Ipv6StaticRouting", LOG_LEVEL_ALL);
+  LogComponentEnable ("Ipv6Interface", LOG_LEVEL_ALL);
+  LogComponentEnable ("Ping6Application", LOG_LEVEL_ALL);
 #endif
 
-  // Set up some default values for the simulation.  Use the 
-  Config::SetDefault ("ns3::OnOffApplication::PacketSize", UintegerValue (210));
-  Config::SetDefault ("ns3::OnOffApplication::DataRate", StringValue ("448kb/s"));
+std::string pathToConfigFile = "config.json";
+std::string queues = "";
+std::string queue1Priority = "";
+std::string queue2Priority = "";
 
-  // DefaultValue::Bind ("DropTailQueue::m_maxPackets", 30);
+bool verbose = true;
+Address udpServerInterfaces;
+Address p2pInterfaces;
 
-  // Allow the user to override any of the defaults and the above
-  // DefaultValue::Bind ()s at run-time, via command-line arguments
-
-    /* Default value for config file path */
-  std::string pathToConfigFile = "config.json";
-  std::string queues = "";
-  std::string queue1Priority = "";
-  std::string queue2Priority = "";
-
-  Address udpServerInterfaces;
-  Address p2pInterfaces;
-
-  // Read config file; take inputstream from the file and put it all in json j
-  std::cout << "Path" << "\n";
-  std::cout << pathToConfigFile << "\n";
-  std::ifstream jsonIn(pathToConfigFile);
-  json j;
-  jsonIn >> j;
-
+if (argc != 0) {
   CommandLine cmd;
-  bool enableFlowMonitor = false;
+  cmd.AddValue ("verbose", "Tell application to log if true", verbose);
   cmd.AddValue ("config", "Config File", pathToConfigFile);
-  std::cout << pathToConfigFile << "\n";
-  cmd.AddValue ("EnableMonitor", "Enable Flow Monitor", enableFlowMonitor);
-  cmd.Parse (argc, argv);
+  cmd.Parse (argc,argv);
+}
 
-  // Here, we will explicitly create four nodes.  In more sophisticated
-  // topologies, we could configure a node factory.
+// Read config file; take inputstream from the file and put it all in json j
+std::ifstream jsonIn(pathToConfigFile);
+json j;
+jsonIn >> j;
+
+
+// Print the pretty json to the terminal
+// std::cout << std::setw(4) << j << std::endl;
+
+// Get the string value from protocolsToCompress and print it
+queues = j["numberOfQueues"].get<std::string>();
+queue1Priority = j["queue1Priority"].get<std::string>();
+queue2Priority = j["queue2Priority"].get<std::string>();
+std::string dataRate (std::to_string(4));
+std::cout << "here" << "\n";
+std::cout << queues << "\n";
+std::cout << queue1Priority << "\n";
+std::cout << queue2Priority << "\n";
+
+/* Default Stuff */
+
+  StackHelper stackHelper;
+
   NS_LOG_INFO ("Create nodes.");
-  NodeContainer c;
-  c.Create (4);
-  NodeContainer n0n2 = NodeContainer (c.Get (0), c.Get (2));
-  NodeContainer n1n2 = NodeContainer (c.Get (1), c.Get (2));
-  NodeContainer n3n2 = NodeContainer (c.Get (3), c.Get (2));
+  Ptr<Node> n0 = CreateObject<Node> ();
+  Ptr<Node> r = CreateObject<Node> ();
+  Ptr<Node> n1 = CreateObject<Node> ();
 
-  InternetStackHelper internet;
-  internet.Install (c);
+  NodeContainer net1 (n0, r);
+  NodeContainer net2 (r, n1);
+  NodeContainer all (n0, r, n1);
 
-  // We create the channels first without any IP addressing information
-  /* p2p seems to be the only object with a queue, so I think we need 
-  to modify that and place SPQ object in there */
+  NS_LOG_INFO ("Create IPv6 Internet Stack");
+  InternetStackHelper internetv6;
+  internetv6.Install (all);
+
   NS_LOG_INFO ("Create channels.");
-  PointToPointHelper p2p;
-  /* So found a bug in SPQ. That's good! We know what's going on now */
-  // p2p.SetQueue("Spq");
-  p2p.SetDeviceAttribute ("DataRate", StringValue ("5Mbps"));
-  p2p.SetChannelAttribute ("Delay", StringValue ("2ms"));
-  /* So this is node device 0 */
-  NetDeviceContainer d0d2 = p2p.Install (n0n2);
-  /* Device 1 */
-  NetDeviceContainer d1d2 = p2p.Install (n1n2);
+  CsmaHelper csma;
+  csma.SetChannelAttribute ("DataRate", DataRateValue (5000000));
+  csma.SetChannelAttribute ("Delay", TimeValue (MilliSeconds (2)));
+  /* Add our own queue */
+  csma.SetQueue("ns3::Spq<Packet>");
+  NetDeviceContainer d1 = csma.Install (net1);
+  NetDeviceContainer d2 = csma.Install (net2);
 
-  p2p.SetDeviceAttribute ("DataRate", StringValue ("1500kbps"));
-  p2p.SetChannelAttribute ("Delay", StringValue ("10ms"));
+  NS_LOG_INFO ("Create networks and assign IPv6 Addresses.");
+  Ipv6AddressHelper ipv6;
+  ipv6.SetBase (Ipv6Address ("2001:1::"), Ipv6Prefix (64));
+  Ipv6InterfaceContainer i1 = ipv6.Assign (d1);
+  i1.SetForwarding (1, true);
+  i1.SetDefaultRouteInAllNodes (1);
+  ipv6.SetBase (Ipv6Address ("2001:2::"), Ipv6Prefix (64));
+  Ipv6InterfaceContainer i2 = ipv6.Assign (d2);
+  i2.SetForwarding (0, true);
+  i2.SetDefaultRouteInAllNodes (0);
 
-  /* Device 2 */
-  NetDeviceContainer d3d2 = p2p.Install (n3n2);
+  stackHelper.PrintRoutingTable (n0);
 
-/* So we have the 3 net devices. But there are technically 4 in the topology diagram. */
-  // Later, we add IP addresses.
-  NS_LOG_INFO ("Assign IP Addresses.");
-  Ipv4AddressHelper ipv4;
-  ipv4.SetBase ("10.1.1.0", "255.255.255.0");
-  Ipv4InterfaceContainer i0i2 = ipv4.Assign (d0d2);
+  /* Create a Ping6 application to send ICMPv6 echo request from n0 to n1 via r */
+  uint32_t packetSize = 1024;
+  uint32_t maxPacketCount = 5;
+  Time interPacketInterval = Seconds (1.);
+  Ping6Helper ping6;
 
-  ipv4.SetBase ("10.1.2.0", "255.255.255.0");
-  Ipv4InterfaceContainer i1i2 = ipv4.Assign (d1d2);
+  ping6.SetLocal (i1.GetAddress (0, 1));
+  ping6.SetRemote (i2.GetAddress (1, 1)); 
 
-  ipv4.SetBase ("10.1.3.0", "255.255.255.0");
-  Ipv4InterfaceContainer i3i2 = ipv4.Assign (d3d2);
-
-  // Create router nodes, initialize routing database and set up the routing
-  // tables in the nodes.
-  Ipv4GlobalRoutingHelper::PopulateRoutingTables ();
-
-  // Create the OnOff application to send UDP datagrams of size
-  // 210 bytes at a rate of 448 Kb/s
-  NS_LOG_INFO ("Create Applications.");
-  uint16_t port = 9;   // Discard port (RFC 863)
-
-  /* This is sending from n1 to n3 i think */
-  OnOffHelper onoff ("ns3::UdpSocketFactory", 
-                     Address (InetSocketAddress (i3i2.GetAddress (0), port)));
-  onoff.SetConstantRate (DataRate ("448kb/s"));
-  ApplicationContainer apps = onoff.Install (c.Get (0));
+  ping6.SetAttribute ("MaxPackets", UintegerValue (maxPacketCount));
+  ping6.SetAttribute ("Interval", TimeValue (interPacketInterval));
+  ping6.SetAttribute ("PacketSize", UintegerValue (packetSize));
+  ApplicationContainer apps = ping6.Install (net1.Get (0));
   apps.Start (Seconds (2.0));
-  apps.Stop (Seconds (12.0));
+  apps.Stop (Seconds (20.0));
 
-  // Create a packet sink to receive these packets
-  /* Packet sinks receive and consume traffic */
-  PacketSinkHelper sink ("ns3::UdpSocketFactory",
-                         Address (InetSocketAddress (Ipv4Address::GetAny (), port)));
-  apps = sink.Install (c.Get (3));
-  apps.Start (Seconds (1.0));
-  apps.Stop (Seconds (10.0));
-
-  // Create a similar flow from n3 to n1, starting at time 1.1 seconds
-  /* So I guess this is just the sending of packets, 
-  if we're receiving them in the packetsink */
-
-  /* Remove the sending of packets back for now
-  onoff.SetAttribute ("Remote", 
-                      AddressValue (InetSocketAddress (i1i2.GetAddress (0), port)));
-  apps = onoff.Install (c.Get (3));
-  apps.Start (Seconds (1.1));
-  apps.Stop (Seconds (10.0));
-
-  // Create a packet sink to receive these packets
-  // Packet sinks receive and consume traffic 
-  apps = sink.Install (c.Get (1));
-  apps.Start (Seconds (1.1));
-  apps.Stop (Seconds (10.0));
-
-*/
   AsciiTraceHelper ascii;
-  p2p.EnableAsciiAll (ascii.CreateFileStream ("simple-global-routing.tr"));
-  p2p.EnablePcapAll ("simple-global-routing");
-
-  // Flow Monitor
-  FlowMonitorHelper flowmonHelper;
-  if (enableFlowMonitor)
-    {
-      flowmonHelper.InstallAll ();
-    }
+  csma.EnableAsciiAll (ascii.CreateFileStream ("simple-routing-ping6.tr"));
+  csma.EnablePcapAll ("simple-routing-ping6", true);
 
   NS_LOG_INFO ("Run Simulation.");
-  Simulator::Stop (Seconds (11));
   Simulator::Run ();
-  NS_LOG_INFO ("Done.");
-
-  if (enableFlowMonitor)
-    {
-      flowmonHelper.SerializeToXmlFile ("simple-global-routing.flowmon", false, false);
-    }
-
   Simulator::Destroy ();
-  return 0;
+  NS_LOG_INFO ("Done.");
 }
+

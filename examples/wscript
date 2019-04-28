@@ -10,7 +10,7 @@ def build(bld):
     obj = bld.create_ns3_program('simple-example', ['project2', 'point-to-point','csma', 'internet', 'config-store','stats'])
     obj.source = 'simple-example.cc'
 
-    obj = bld.create_ns3_program('simple-global-routing-p2', ['project2', 'point-to-point','csma', 'internet', 'config-store','stats'])
+    obj = bld.create_ns3_program('simple-global-routing-p2', ['project2', 'point-to-point','csma', 'internet', 'config-store','stats', 'applications', 'flow-monitor', 'internet-apps'])
     obj.source = 'simple-global-routing-p2.cc'
 
 
