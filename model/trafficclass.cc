@@ -99,7 +99,7 @@ bool TrafficClass<Item>::match(Ptr<Item> T)
 	/* Check filter to see if packet matches */
 	bool matching = false;
 	for(std::vector<Filter*>::size_type i = 0; i != this -> filters.size(); i++) {
-    	matching = filters[i] -> Match(T);
+    	matching = matching || filters[i] -> Match(T);
     	std::cout << matching << std::endl;
 	}
 	/* Add to internal queue if it's a match */
@@ -107,7 +107,7 @@ bool TrafficClass<Item>::match(Ptr<Item> T)
 	/* And return true if it's a match */
 
 	/* Return false if now */
-	return false;
+	return matching;
 }
 template class TrafficClass<Packet>;
 
