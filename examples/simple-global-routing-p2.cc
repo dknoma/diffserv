@@ -34,12 +34,10 @@
 #include "ns3/csma-module.h"
 #include "ns3/internet-apps-module.h"
 #include "ns3/ipv6-static-routing-helper.h"
-
 #include "ns3/ipv6-routing-table-entry.h"
 #include "ns3/diffserv.h"
 #include "ns3/spq.h"
 #include "ns3/applications-module.h"
-#include "ns3/internet-module.h"
 #include "ns3/udp-app-helper.h"
 #include <nlohmann/json.hpp>
 
@@ -48,117 +46,73 @@ using json = nlohmann::json;
 
 NS_LOG_COMPONENT_DEFINE ("SimpleGlobalRoutingExamplep2");
 
-/**
- * \class StackHelper
- * \brief Helper to set or get some IPv6 information about nodes.
- */
-class StackHelper
-{
-public:
-
-  /**
-   * \brief Add an address to a IPv6 node.
-   * \param n node
-   * \param interface interface index
-   * \param address IPv6 address to add
-   */
-  inline void AddAddress (Ptr<Node>& n, uint32_t interface, Ipv6Address address)
-  {
-    Ptr<Ipv6> ipv6 = n->GetObject<Ipv6> ();
-    ipv6->AddAddress (interface, address);
-  }
-
-  /**
-   * \brief Print the routing table.
-   * \param n the node
-   */
-  inline void PrintRoutingTable (Ptr<Node>& n)
-  {
-    Ptr<Ipv6StaticRouting> routing = 0;
-    Ipv6StaticRoutingHelper routingHelper;
-    Ptr<Ipv6> ipv6 = n->GetObject<Ipv6> ();
-    uint32_t nbRoutes = 0;
-    Ipv6RoutingTableEntry route;
-
-    routing = routingHelper.GetStaticRouting (ipv6);
-
-    std::cout << "Routing table of " << n << " : " << std::endl;
-    std::cout << "Destination\t\t\t\t" << "Gateway\t\t\t\t\t" << "Interface\t" <<  "Prefix to use" << std::endl;
-
-    nbRoutes = routing->GetNRoutes ();
-    for (uint32_t i = 0; i < nbRoutes; i++)
-      {
-        route = routing->GetRoute (i);
-        std::cout << route.GetDest () << "\t"
-                  << route.GetGateway () << "\t"
-                  << route.GetInterface () << "\t"
-                  << route.GetPrefixToUse () << "\t"
-                  << std::endl;
-      }
-  }
-};
-
 int main (int argc, char** argv)
 {
-#if 0 
-  LogComponentEnable ("Ipv6L3Protocol", LOG_LEVEL_ALL);
-  LogComponentEnable ("Icmpv6L4Protocol", LOG_LEVEL_ALL);
-  LogComponentEnable ("Ipv6StaticRouting", LOG_LEVEL_ALL);
-  LogComponentEnable ("Ipv6Interface", LOG_LEVEL_ALL);
-  LogComponentEnable ("Ping6Application", LOG_LEVEL_ALL);
-#endif
+  #if 0 
+    LogComponentEnable ("Ipv6L3Protocol", LOG_LEVEL_ALL);
+    LogComponentEnable ("Icmpv6L4Protocol", LOG_LEVEL_ALL);
+    LogComponentEnable ("Ipv6StaticRouting", LOG_LEVEL_ALL);
+    LogComponentEnable ("Ipv6Interface", LOG_LEVEL_ALL);
+    LogComponentEnable ("Ping6Application", LOG_LEVEL_ALL);
+  #endif
 
-std::string pathToConfigFile = "config.json";
-std::string queues = "";
-std::string queue1Priority = "";
-std::string queue2Priority = "";
+  std::string pathToConfigFile = "config.json";
+  std::string queues = "";
+  std::string queue1Priority = "";
+  std::string queue2Priority = "";
 
-bool verbose = true;
-Address udpServerInterfaces;
-Address p2pInterfaces;
+  bool verbose = true;
+  Address origin;
+  Address destination;
+  Address router;
 
-if (argc != 0) {
-  CommandLine cmd;
-  cmd.AddValue ("verbose", "Tell application to log if true", verbose);
-  cmd.AddValue ("config", "Config File", pathToConfigFile);
-  cmd.Parse (argc,argv);
-}
+  if (argc != 0) {
+    CommandLine cmd;
+    cmd.AddValue ("verbose", "Tell application to log if true", verbose);
+    cmd.AddValue ("config", "Config File", pathToConfigFile);
+    cmd.Parse (argc,argv);
+  }
 
-// Read config file; take inputstream from the file and put it all in json j
-std::ifstream jsonIn(pathToConfigFile);
-json j;
-jsonIn >> j;
+  // Read config file; take inputstream from the file and put it all in json j
+  std::ifstream jsonIn(pathToConfigFile);
+  json j;
+  jsonIn >> j;
 
 
-// Print the pretty json to the terminal
-// std::cout << std::setw(4) << j << std::endl;
+  // Print the pretty json to the terminal
+  // std::cout << std::setw(4) << j << std::endl;
 
-// Get the string value from protocolsToCompress and print it
-queues = j["numberOfQueues"].get<std::string>();
-queue1Priority = j["queue1Priority"].get<std::string>();
-queue2Priority = j["queue2Priority"].get<std::string>();
-std::string dataRate (std::to_string(4));
-std::cout << "here" << "\n";
-std::cout << queues << "\n";
-std::cout << queue1Priority << "\n";
-std::cout << queue2Priority << "\n";
+  // Get the string value from protocolsToCompress and print it
+  queues = j["numberOfQueues"].get<std::string>();
+  queue1Priority = j["queue1Priority"].get<std::string>();
+  queue2Priority = j["queue2Priority"].get<std::string>();
+  std::string dataRate (std::to_string(4));
+  std::cout << queues << "\n";
+  std::cout << queue1Priority << "\n";
+  std::cout << queue2Priority << "\n";
+  /* Default Stuff */
 
-/* Default Stuff */
-
-  StackHelper stackHelper;
 
   NS_LOG_INFO ("Create nodes.");
+  /* n0 is the client */
   Ptr<Node> n0 = CreateObject<Node> ();
+  /* r is the router */
   Ptr<Node> r = CreateObject<Node> ();
+  /* n1 is the server */
   Ptr<Node> n1 = CreateObject<Node> ();
 
+  /* From client to router node */
   NodeContainer net1 (n0, r);
+
+  /* From router to server node */
   NodeContainer net2 (r, n1);
+
+  /* All the nodes */
   NodeContainer all (n0, r, n1);
 
   NS_LOG_INFO ("Create IPv6 Internet Stack");
-  InternetStackHelper internetv6;
-  internetv6.Install (all);
+  InternetStackHelper internetv4;
+  internetv4.Install (all);
 
   NS_LOG_INFO ("Create channels.");
   CsmaHelper csma;
@@ -166,38 +120,64 @@ std::cout << queue2Priority << "\n";
   csma.SetChannelAttribute ("Delay", TimeValue (MilliSeconds (2)));
   /* Add our own queue */
   csma.SetQueue("ns3::Spq<Packet>");
+
   NetDeviceContainer d1 = csma.Install (net1);
   NetDeviceContainer d2 = csma.Install (net2);
 
-  NS_LOG_INFO ("Create networks and assign IPv6 Addresses.");
-  Ipv6AddressHelper ipv6;
-  ipv6.SetBase (Ipv6Address ("2001:1::"), Ipv6Prefix (64));
-  Ipv6InterfaceContainer i1 = ipv6.Assign (d1);
-  i1.SetForwarding (1, true);
-  i1.SetDefaultRouteInAllNodes (1);
-  ipv6.SetBase (Ipv6Address ("2001:2::"), Ipv6Prefix (64));
-  Ipv6InterfaceContainer i2 = ipv6.Assign (d2);
-  i2.SetForwarding (0, true);
-  i2.SetDefaultRouteInAllNodes (0);
+  /* So now we have created the nodes and CSMA with the correct queue.
 
-  stackHelper.PrintRoutingTable (n0);
+  We want to send UDP packets now */
 
-  /* Create a Ping6 application to send ICMPv6 echo request from n0 to n1 via r */
-  uint32_t packetSize = 1024;
-  uint32_t maxPacketCount = 5;
-  Time interPacketInterval = Seconds (1.);
-  Ping6Helper ping6;
+  Ipv4AddressHelper ipv4;
+  // This should be n0 (origin)
+  ipv4.SetBase ("10.1.1.0", "255.255.255.0");
+  Ipv4InterfaceContainer i1 = ipv4.Assign (d1);
+  origin = Address (i1.GetAddress (1));
+  std::cout << "Origin: " << origin << "\n";
 
-  ping6.SetLocal (i1.GetAddress (0, 1));
-  ping6.SetRemote (i2.GetAddress (1, 1)); 
+  // This should be routing node?
+  //ipv4.SetBase ("10.1.2.0", "255.255.255.0");
+  //Ipv4InterfaceContainer i1 = ipv4.Assign (d1);
+  //origin = Address (i1.GetAddress (1));
+  //std::cout << "Origin: " << origin << "\n";
 
-  ping6.SetAttribute ("MaxPackets", UintegerValue (maxPacketCount));
-  ping6.SetAttribute ("Interval", TimeValue (interPacketInterval));
-  ping6.SetAttribute ("PacketSize", UintegerValue (packetSize));
-  ApplicationContainer apps = ping6.Install (net1.Get (0));
+  // This should be n1 (destination)
+  ipv4.SetBase ("10.1.3.0", "255.255.255.0");
+  Ipv4InterfaceContainer i2 = ipv4.Assign (d2);
+  // Set clients address to the first udp node
+  destination = Address (i2.GetAddress (1));
+  std::cout << "Destination: " << destination << "\n";
+
+  /* Create an application to send UDP packets from n0 to n1 via r */
+
+  //
+  // Create one udpServer applications on node one and start
+  //
+
+  uint16_t port = 4000;
+  UdpServerHelper server (port);
+  ApplicationContainer apps = server.Install (n1);
+  apps.Start (Seconds (1.0));
+  apps.Stop (Seconds (10.0));
+
+  //
+  // Create one UdpClient application to send UDP datagrams from node zero to
+  // node one.
+  //
+  
+  uint32_t MaxPacketSize = 1024;
+  Time interPacketInterval = Seconds (0.05);
+  uint32_t maxPacketCount = 320;
+  UdpClientHelper client (destination, port);
+  client.SetAttribute ("MaxPackets", UintegerValue (maxPacketCount));
+  client.SetAttribute ("Interval", TimeValue (interPacketInterval));
+  client.SetAttribute ("PacketSize", UintegerValue (MaxPacketSize));
+  apps = client.Install (n0);
   apps.Start (Seconds (2.0));
-  apps.Stop (Seconds (20.0));
+  apps.Stop (Seconds (10.0));
 
+
+/* Tracing */
   AsciiTraceHelper ascii;
   csma.EnableAsciiAll (ascii.CreateFileStream ("simple-routing-ping6.tr"));
   csma.EnablePcapAll ("simple-routing-ping6", true);
@@ -207,4 +187,3 @@ std::cout << queue2Priority << "\n";
   Simulator::Destroy ();
   NS_LOG_INFO ("Done.");
 }
-

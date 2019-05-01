@@ -69,13 +69,13 @@ if (argc != 0) {
   pointToPoint.SetDeviceAttribute ("DataRate", StringValue (dataRate + "Mbps"));
 
   /* Explicitly create the nodes required by the topology (shown above). */
-  NS_LOG_INFO ("Create nodes.");
+  //NS_LOG_INFO ("Create nodes.");
   NodeContainer udpNodes;
   udpNodes.Create (2);
 
 	// p2pNetDevice container
   NetDeviceContainer p2pDevices = pointToPoint.Install (p2pNodes);
-  NS_LOG_INFO ("Create channels.");
+  //NS_LOG_INFO ("Create channels.");
 	//
 	// Explicitly create the channels required by the topology (shown above).
 	//
@@ -83,6 +83,7 @@ if (argc != 0) {
   csma.SetChannelAttribute ("DataRate", DataRateValue (DataRate (5000000)));
   csma.SetChannelAttribute ("Delay", TimeValue (MilliSeconds (2)));
   csma.SetDeviceAttribute ("Mtu", UintegerValue (1400));
+  csma.SetQueue("ns3::Spq<Packet>");
 
   NetDeviceContainer udpContainer = csma.Install (udpNodes);  // Install UDP nodes
 
@@ -94,7 +95,7 @@ if (argc != 0) {
 	//
 	// We've got the "hardware" in place.  Now we need to add IP addresses.
 	//
-  NS_LOG_INFO ("Assign IP Addresses.");
+  //NS_LOG_INFO ("Assign IP Addresses.");
   if (useV6 == false)
     {
       Ipv4AddressHelper ipv4;
@@ -117,7 +118,7 @@ if (argc != 0) {
       udpServerInterfaces = Address(i6.GetAddress (1,1));
     }
 
-  NS_LOG_INFO ("Create Applications.");
+  //NS_LOG_INFO ("Create Applications.");
 
 	//
 	// Create one udpServer applications on node one.
@@ -170,7 +171,7 @@ if (argc != 0) {
 	//
 	// Now, do the actual simulation.
 	//
-  NS_LOG_INFO ("Run Simulation.");
+  //NS_LOG_INFO ("Run Simulation.");
 
   Simulator::Run ();
   Simulator::Destroy ();
