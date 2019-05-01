@@ -5,7 +5,7 @@
 
 Pull the entire repo into a new folder named project2.  Now go to your NS-3 installation folder. From here you will go to the /src folder and place the newly created repo folder into it. For example, it would look something like this ```/ns-3.29/src/project2```, where /ns-3.29 is our current installation of NS-3.
 
-The ```nlohmann``` folder must be copied into the NS-3 root folder, where ```src``` is. The ```config.json``` and ```randomfile``` file must also be moved to the NS-3 root. 
+The ```nlohmann``` folder and ```config.json``` file must be copied into the NS-3 root folder, where ```src``` is.
 
 The four ```point-to-point...``` files in ```/project2/model``` must be copied into ```src/point-to-point/model```.
 
