@@ -3,7 +3,7 @@
 
 ## Migrating Code into NS-3
 
-Pull the entire repo into a new folder named project1.  Now go to your NS-3 installation folder. From here you will go to the /src folder and place the newly created repo folder into it. For example, it would look something like this ```/ns-3.29/src/project2```, where /ns-3.29 is our current installation of NS-3.
+Pull the entire repo into a new folder named project2.  Now go to your NS-3 installation folder. From here you will go to the /src folder and place the newly created repo folder into it. For example, it would look something like this ```/ns-3.29/src/project2```, where /ns-3.29 is our current installation of NS-3.
 
 The ```nlohmann``` folder must be copied into the NS-3 root folder, where ```src``` is. The ```config.json``` and ```randomfile``` file must also be moved to the NS-3 root. 
 
@@ -42,5 +42,5 @@ Additionally, you some applications allow you to input additional parameters int
 ./waf --run "spq-example --config=config.json"
 ```
 
-This command  will let the UDP application run with compression enabled, and it will set the PointToPointNetDevice's Data Rate to 8Mbps. 
+This command will run the SPQ example.
 
