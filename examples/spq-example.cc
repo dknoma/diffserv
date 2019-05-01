@@ -12,6 +12,7 @@ This one is for SPQ
 #include "ns3/point-to-point-module.h"
 #include "ns3/internet-module.h"
 #include "ns3/udp-app-helper.h"
+#include "ns3/spq.h"
 #include <nlohmann/json.hpp>
 #include <iomanip>
 #include <stdio.h>
@@ -34,13 +35,10 @@ main (int argc, char *argv[])
   bool verbose = true;
   Address udpServerInterfaces;
   Address p2pInterfaces;
-
-if (argc != 0) {
   CommandLine cmd;
   cmd.AddValue ("verbose", "Tell application to log if true", verbose);
 	cmd.AddValue ("config", "Config File", pathToConfigFile);
   cmd.Parse (argc,argv);
-}
   // Read config file; take inputstream from the file and put it all in json j
   std::ifstream jsonIn(pathToConfigFile);
   json j;
@@ -61,29 +59,34 @@ if (argc != 0) {
   std::cout << queue2Priority << "\n";
 
   /* Set up p2p device to test application */
+ // Set data rate for point to point
+  //std::string dataRate (std::to_string(maxBandwidth));
   NodeContainer p2pNodes;
   p2pNodes.Create (2);
 
-  /* Setup p2p Nodes for the IP Link */
+  // Setup p2p nodes for the IP link
   PointToPointHelper pointToPoint;
-  pointToPoint.SetDeviceAttribute ("DataRate", StringValue (dataRate + "Mbps"));
-
-  /* Explicitly create the nodes required by the topology (shown above). */
-  //NS_LOG_INFO ("Create nodes.");
+  //pointToPoint.SetDeviceAttribute ("DataRate", StringValue (dataRate + "Mbps"));
+  pointToPoint.SetChannelAttribute ("Delay", StringValue ("2ms"));
+  pointToPoint.SetQueue("ns3::Spq");
+//
+// Explicitly create the nodes required by the topology (shown above).
+//
+//  NS_LOG_INFO ("Create nodes.");
   NodeContainer udpNodes;
   udpNodes.Create (2);
 
-	// p2pNetDevice container
+// p2pNetDevice container
   NetDeviceContainer p2pDevices = pointToPoint.Install (p2pNodes);
-  //NS_LOG_INFO ("Create channels.");
-	//
-	// Explicitly create the channels required by the topology (shown above).
-	//
+
+//  NS_LOG_INFO ("Create channels.");
+//
+// Explicitly create the channels required by the topology (shown above).
+//
   CsmaHelper csma;
   csma.SetChannelAttribute ("DataRate", DataRateValue (DataRate (5000000)));
   csma.SetChannelAttribute ("Delay", TimeValue (MilliSeconds (2)));
   csma.SetDeviceAttribute ("Mtu", UintegerValue (1400));
-  csma.SetQueue("ns3::Spq<Packet>");
 
   NetDeviceContainer udpContainer = csma.Install (udpNodes);  // Install UDP nodes
 
@@ -92,10 +95,16 @@ if (argc != 0) {
   internet.Install (udpNodes);
   internet.Install (p2pNodes);
 
-	//
-	// We've got the "hardware" in place.  Now we need to add IP addresses.
-	//
-  //NS_LOG_INFO ("Assign IP Addresses.");
+  // CsmaHelper csmaServer;
+  // csmaServer.SetChannelAttribute ("DataRate", DataRateValue (DataRate (5000000)));
+  // csmaServer.SetChannelAttribute ("Delay", TimeValue (MilliSeconds (2)));
+  // csmaServer.SetDeviceAttribute ("Mtu", UintegerValue (1400));
+  // NetDeviceContainer udpContainer = csmaClient.Install (udpNodes);  // Install UDP nodes
+
+//
+// We've got the "hardware" in place.  Now we need to add IP addresses.
+//
+//  NS_LOG_INFO ("Assign IP Addresses.");
   if (useV6 == false)
     {
       Ipv4AddressHelper ipv4;
@@ -118,11 +127,10 @@ if (argc != 0) {
       udpServerInterfaces = Address(i6.GetAddress (1,1));
     }
 
-  //NS_LOG_INFO ("Create Applications.");
-
-	//
-	// Create one udpServer applications on node one.
-	//
+//  NS_LOG_INFO ("Create Applications.");
+//
+// Create one udpServer applications on node one.
+//
   uint16_t port = 4000;
   uint32_t maxPacketCount = 6000;
   UdpAppServerHelper server (port);
@@ -131,10 +139,10 @@ if (argc != 0) {
   udpApps.Start (Seconds (0));
   udpApps.Stop (Seconds (3000.0));
 
-	//
-	// Create one UdpClient application to send UDP datagrams from node zero to
-	// node one.
-	//
+//
+// Create one UdpClient application to send UDP datagrams from node zero to
+// node one.
+//
   uint32_t MaxPacketSize = 1024;
   Time interPacketInterval = Seconds (0.015);
   UdpAppClientHelper appClient (udpServerInterfaces, port);
@@ -156,9 +164,9 @@ if (argc != 0) {
   // p2pClient.Start (Seconds (2.0));
   // p2pClient.Stop (Seconds (300.0));
 
-	// #if 0
-	// set fill for packet data
-	// #endif
+// #if 0
+// set fill for packet data
+// #endif
 
   // Init routers (PointToPoint devices)
   Ipv4GlobalRoutingHelper::PopulateRoutingTables ();
@@ -168,14 +176,13 @@ if (argc != 0) {
   csma.EnablePcapAll ("udp-app-l", false);
   pointToPoint.EnablePcapAll ("udp-p2p-l", false);
 
-	//
-	// Now, do the actual simulation.
-	//
-  //NS_LOG_INFO ("Run Simulation.");
-
+//
+// Now, do the actual simulation.
+//
+//  NS_LOG_INFO ("Run Simulation.");
   Simulator::Run ();
   Simulator::Destroy ();
-  return 0;
+//  NS_LOG_INFO ("Done.");
 }
 
 

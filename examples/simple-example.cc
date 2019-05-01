@@ -54,7 +54,6 @@ main (int argc, char *argv[])
   json j;
   jsonIn >> j;
 
-
 	// Print the pretty json to the terminal
   // std::cout << std::setw(4) << j << std::endl;
 
