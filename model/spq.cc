@@ -12,6 +12,26 @@ template <typename Item>
 Spq<Item>::Spq()
 {
 std::cout << "Constructor\n";
+/* Need to create the high priority and low priority traffic classes first */
+	TrafficClass<Packet>* trafficClassHigh = new TrafficClass<Packet>();
+	TrafficClass<Packet>* trafficClassLow = new TrafficClass<Packet>();
+	/* Set the first one (0) to be default */
+	trafficClassLow -> SetIsDefault(false);
+
+	/* Add them to q_class */
+    this->q_class.push_back(trafficClassLow);
+    this->q_class.push_back(trafficClassHigh);
+
+    /* Create the filters. They'll just be hardcoded for now */
+    Filter* filter1 = new Filter();
+    Filter* filter2 = new Filter();
+
+
+    /* Adding these filters to test against */
+    q_class[0]->AddFilter(filter1);
+    q_class[1]->AddFilter(filter2);
+
+
 }
 template <typename Item>
 Spq<Item>::~Spq ()
@@ -36,27 +56,9 @@ TypeId Spq<Item>::GetTypeId (void) {
 template <typename Item>
 bool Spq<Item>::DoEnqueue(Ptr<Item> T) {
 	std::cout << "Enqueue\n";
-	/* Figure out which traffic class to add this to */
-	/* So loop through our filters, and figure out which queue to put this in */
-	bool matching = false;
-	for(typename std::vector<Item>::size_type i = 0; i != this -> Spq::q_class.size(); i++) {
-    	matching = Spq::q_class[i] -> match(T);
-    	if (matching == true) {
-    		return this -> Spq::q_class[i] -> Enqueue(T);
-    	}
-	}
-
-	/* So there are no matches, so loop through again and put into default queue */
-	bool isDefault;
-	for(typename std::vector<Item>::size_type i = 0; i != this -> Spq::q_class.size(); i++) {
-    	isDefault = Spq::q_class[i] -> GetIsDefault();
-    	if (isDefault == true) {
-    		return this -> Spq::q_class[i] -> Enqueue(T);
-    	}
-	}
-
-	/* Place here to avoid error for now but need to refactor above code */
-	return this -> Enqueue(T);
+	/* Figure out which traffic class to add this to by calling classify */
+    int priority = Classify(T);
+    return q_class[priority]->Enqueue((Ptr<Packet>) T);
 };
 
 
@@ -67,14 +69,14 @@ Ptr<Item> Spq<Item>::DoDequeue(void) {
 	/* Iterate through the vectors. If high priority vector is not empty 
 	dequeue from that one. Else dequeue from the other one */
 	uint32_t priority;
-	for(typename std::vector<Item>::size_type i = 0; i != this -> Spq::q_class.size(); i++) {
+	for(typename std::vector<Item>::size_type i = 0; i != this -> q_class.size(); i++) {
     	priority = Spq::q_class[i] -> GetPriorityLevel();
     	/* 1 or 0, not sure */
     	if (priority == 1) {
     		/* If the high priority queue is empty */
     		if (Spq::q_class[i] -> GetPackets() == 0) {
     			/* Get first packet available from other non-empty queues */
-    			for(typename std::vector<Item>::size_type z = 0; z != this -> Spq::q_class.size(); z++) {
+    			for(typename std::vector<Item>::size_type z = 0; z != this -> q_class.size(); z++) {
     				if (Spq::q_class[z] -> GetPackets() != 0) {
     					return this -> Spq::q_class[z] -> Dequeue ();
     				}
@@ -103,14 +105,14 @@ Ptr<const Item> Spq<Item>::DoPeek(void) {
 traffic queue to be served at the time. */
 template <typename Item>
 Ptr<Item> Spq<Item>::Schedule() {
- 	Ptr<Packet> p = Create<Packet>();
 	/* If we received a high priority packet, deal with that first */
-
-	/* Else if there are no high priority packets, we can deal with the low 
-	priority packets */
+    if (this -> q_class[1]->GetSizeBytes() != 0) {
+        return (Ptr<Item>)(this -> q_class[1]->Dequeue());
+    } else {
+        return (Ptr<Item>)(this -> q_class[0]->Dequeue());
+    }
 
 	/* Retun the packet that we'd like to dequeue */
-	return p;
 };
 
 /* The classify function utilizes filter aspect to sort the traffic packets into appropriate traffic
@@ -118,7 +120,14 @@ queues. */
 template <typename Item>
 uint32_t Spq<Item>::Classify(Ptr<Item> p) {
 	/* Decide which queue to inert this packet into */
-	return 0;
+	Ptr<Packet> packet = (Ptr<Packet>)p;
+    for (int i = 0; i < (int) this -> q_class.size(); i++) {
+        if (this->q_class[i]->match(packet)) {
+            return i;
+        }
+    }
+    /* Otherwise return whatever is the default queue */
+    return 0;
 };
 
 // template class Spq<Packet>;

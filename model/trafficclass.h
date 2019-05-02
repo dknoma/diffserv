@@ -51,6 +51,8 @@ public:
 	double GetWeight(void);
 	void SetWeight(double w);
 
+	uint32_t GetSizeBytes(void);
+
 	/* Add Filter to Filters Vector, may or may not need */
 	void AddFilter (Filter *f);
 

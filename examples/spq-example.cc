@@ -74,7 +74,7 @@ main (int argc, char *argv[])
 //
 //  NS_LOG_INFO ("Create nodes.");
   NodeContainer udpNodes;
-  udpNodes.Create (2);
+  udpNodes.Create (4);
 
 // p2pNetDevice container
   NetDeviceContainer p2pDevices = pointToPoint.Install (p2pNodes);
@@ -127,32 +127,55 @@ main (int argc, char *argv[])
       udpServerInterfaces = Address(i6.GetAddress (1,1));
     }
 
-//  NS_LOG_INFO ("Create Applications.");
-//
-// Create one udpServer applications on node one.
-//
-  uint16_t port = 4000;
-  uint32_t maxPacketCount = 6000;
-  UdpAppServerHelper server (port);
-  server.SetAttribute ("MaxPackets", UintegerValue (maxPacketCount));
-  ApplicationContainer udpApps = server.Install (udpNodes.Get (1));
-  udpApps.Start (Seconds (0));
-  udpApps.Stop (Seconds (3000.0));
+/* Create the client and server helpers. 
+We will filter by port for simulation */
 
-//
+ uint32_t maxPacketCount = 6000;
+// Create one udpServer applications on node one.
+
+  uint16_t port1 = 4000;
+  UdpAppServerHelper server1 (port1);
+  server1.SetAttribute ("MaxPackets", UintegerValue (maxPacketCount));
+  ApplicationContainer udpApps1 = server1.Install (udpNodes.Get (1));
+  udpApps1.Start (Seconds (0));
+  udpApps1.Stop (Seconds (3000.0));
+
+// Create one udpServer application on node 3.
+  uint16_t port2 = 4080;
+  UdpAppServerHelper server2 (port2);
+  server2.SetAttribute ("MaxPackets", UintegerValue (maxPacketCount));
+  ApplicationContainer udpApps2 = server2.Install (udpNodes.Get (3));
+  udpApps2.Start (Seconds (0));
+  udpApps2.Stop (Seconds (3000.0));
+
+
 // Create one UdpClient application to send UDP datagrams from node zero to
 // node one.
-//
-  uint32_t MaxPacketSize = 1024;
   Time interPacketInterval = Seconds (0.015);
-  UdpAppClientHelper appClient (udpServerInterfaces, port);
+  uint32_t MaxPacketSize = 1024;
+
+  UdpAppClientHelper appClient1 (udpServerInterfaces, port1);
   // UdpAppClientHelper appClient (p2pInterfaces, port);
-  appClient.SetAttribute ("MaxPackets", UintegerValue (maxPacketCount));
-  appClient.SetAttribute ("Interval", TimeValue (interPacketInterval));
-  appClient.SetAttribute ("PacketSize", UintegerValue (MaxPacketSize));
+  appClient1.SetAttribute ("MaxPackets", UintegerValue (maxPacketCount));
+  appClient1.SetAttribute ("Interval", TimeValue (interPacketInterval));
+  appClient1.SetAttribute ("PacketSize", UintegerValue (MaxPacketSize));
   // Install udp client node into the app
-  std::cout << "First round\n";
-  udpApps = appClient.Install (udpNodes.Get (0));
+  std::cout << "First client\n";
+  udpApps1 = appClient1.Install (udpNodes.Get (0));
+
+  UdpAppClientHelper appClient2 (udpServerInterfaces, port2);
+  // UdpAppClientHelper appClient (p2pInterfaces, port);
+  appClient2.SetAttribute ("MaxPackets", UintegerValue (maxPacketCount));
+  appClient2.SetAttribute ("Interval", TimeValue (interPacketInterval));
+  appClient2.SetAttribute ("PacketSize", UintegerValue (MaxPacketSize));
+  // Install udp client node into the app
+  std::cout << "Second client\n";
+  udpApps2 = appClient2.Install (udpNodes.Get (2));
+
+// Create one UdpClient application to send UDP datagrams from node zero to
+// node one.
+
+
   // udpApps.Start (Seconds (1200.0));
   // udpApps.Stop (Seconds (3000.0));
 
@@ -160,7 +183,9 @@ main (int argc, char *argv[])
   // appClient.SetFill (udpApps.Get (0), fill, sizeof(fill), 1024);
 
   // Install p2p nodes into the app
-  ApplicationContainer p2pClient = appClient.Install (p2pNodes.Get (0));
+  /* Application container holds everything. Not sure how to do this */
+  ApplicationContainer p2pClient = appClient1.Install (p2pNodes.Get (0));
+  ApplicationContainer p2pClient2 = appClient1.Install (p2pNodes.Get (0));
   // p2pClient.Start (Seconds (2.0));
   // p2pClient.Stop (Seconds (300.0));
 

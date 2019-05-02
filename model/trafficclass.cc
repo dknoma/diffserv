@@ -52,6 +52,12 @@ void TrafficClass<Item>::SetPackets(uint32_t p)
 }
 
 template <typename Item>
+uint32_t TrafficClass<Item>::GetSizeBytes()
+{
+	return this -> bytes;
+}
+
+template <typename Item>
 double TrafficClass<Item>::GetWeight()
 {
 	return this -> weight;

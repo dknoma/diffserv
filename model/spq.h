@@ -3,6 +3,7 @@
 #define SPQ_H
 
 #include "diffserv.h"
+#include "trafficclass.h"
 
 
 namespace ns3 {
@@ -36,6 +37,7 @@ public:
 	* This is the destructor for the Diffserv.
 	*/
 
+	std::vector<TrafficClass<Packet>*> q_class;
 	virtual ~Spq ();
 	bool DoEnqueue(Ptr<Item> T);
 	Ptr<const Item> DoPeek();
