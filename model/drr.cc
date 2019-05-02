@@ -26,6 +26,8 @@ Drr::Drr()
     Filter* filter2 = new Filter();
     Filter* filter3 = new Filter();
 
+    /* TODO: Set the filters. Can also do this in the example but this is easier */
+
 
     /* Adding these filters to test against */
     q_class[0]->AddFilter(filter1);
@@ -68,6 +70,7 @@ Ptr<const Packet> Drr::DoPeek(void) {
 	return this -> Peek ();
 };
 
+/* TODO: This function also */
 Ptr<ns3::Packet> Drr::Schedule() {
 	Ptr<Packet> p = Create<Packet>();
 	return p;

@@ -28,6 +28,8 @@ std::cout << "Constructor\n";
     Filter* filter1 = new Filter();
     Filter* filter2 = new Filter();
 
+    /* TODO: Set the filters. Can also do this in the example but this is easier */
+
 
     /* Adding these filters to test against */
     q_class[0]->AddFilter(filter1);
@@ -68,7 +70,7 @@ template <typename Item>
 Ptr<Item> Spq<Item>::DoDequeue(void) {
 	std::cout << "Dequeue\n";
 
-	/* Get the packet we'd like to dequeue */
+	/* This removes the packet from the correct traffic class */
 	Ptr<Item> T = Schedule();
 
 	/* Convert the item to a packet */
