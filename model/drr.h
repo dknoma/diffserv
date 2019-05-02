@@ -40,7 +40,6 @@ public:
 	Ptr<Packet> DoDequeue(void);
 	Ptr<ns3::Packet> Schedule();
 	uint32_t Classify(Ptr<ns3::Packet> p);
-
 };
 
 }
