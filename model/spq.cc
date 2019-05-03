@@ -2,6 +2,7 @@
 
 #include "spq.h"
 #include "ns3/SourcePortNumberFilter.h"
+#include "ns3/DestinationPortNumberFilter.h"
 #include "ns3/log.h"
 #include "ns3/ppp-header.h"
 #include "ns3/ipv4-header.h"
@@ -28,8 +29,8 @@ trafficClassHigh -> SetPriorityLevel(1);
   // Filter* filter2 = new Filter();
 
   /* Set the filters. Can also do this in the example but this is easier */
-  SourcePortNumberFilter* srcPortFilter1 = new SourcePortNumberFilter();
-  SourcePortNumberFilter* srcPortFilter2 = new SourcePortNumberFilter();
+  DestinationPortNumberFilter* srcPortFilter1 = new DestinationPortNumberFilter();
+  DestinationPortNumberFilter* srcPortFilter2 = new DestinationPortNumberFilter();
   srcPortFilter1->SetPort(4000);
   srcPortFilter2->SetPort(6000);
 

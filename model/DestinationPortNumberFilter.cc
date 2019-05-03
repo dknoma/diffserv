@@ -21,6 +21,7 @@
 #include "ns3/trace-source-accessor.h"
 #include "ns3/ipv4-header.h"
 #include "ns3/udp-header.h"
+#include "ns3/ppp-header.h"
 #include "DestinationPortNumberFilter.h"
 #include <chrono>
 #include <thread>
@@ -74,6 +75,14 @@ DestinationPortNumberFilter::Match (Ptr<ns3::Packet> packet)
     std::cout << "empty packet...\n";
     return false;
   }
+
+    // Remove p2pHeader
+  packet->Print(std::cout);
+  std::cout << "\n";
+  PppHeader removedp2pHeader;
+  copy->RemoveHeader(removedp2pHeader);
+
+
   // Remove Ipv4Header
   Ipv4Header removedHeader;
   copy->RemoveHeader(removedHeader);

@@ -17,6 +17,7 @@
  */
 #include "ns3/log.h"
 #include "ns3/packet.h"
+#include "ns3/ppp-header.h"
 #include "ns3/uinteger.h"
 #include "ns3/trace-source-accessor.h"
 #include "ns3/ipv4-header.h"
@@ -74,16 +75,26 @@ SourcePortNumberFilter::Match (Ptr<ns3::Packet> packet)
     std::cout << "empty packet...\n";
     return false;
   }
-  // Remove Ipv4Header
-  Ipv4Header removedHeader;
-  copy->RemoveHeader(removedHeader);
+
+/* One of these headers should match eventually */
+
+
+
 
   packet->Print(std::cout);
   std::cout << "\n";
+      // Remove p2pHeader
+  PppHeader removedp2pHeader;
+  copy->RemoveHeader(removedp2pHeader);
   // Get UDP header
   UdpHeader header;
   // std::cout << "peeking header...\n";
   copy->PeekHeader(header); // Get the IPv4 header from the packet
+
+
+  // Remove Ipv4Header
+  Ipv4Header removedHeader;
+  copy->RemoveHeader(removedHeader);
   // if (header)
   // {
   //   std::cout << "header was null\n";
