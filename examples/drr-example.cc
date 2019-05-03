@@ -25,12 +25,13 @@ using json = nlohmann::json;
 int 
 main (int argc, char *argv[])
 {
-  std::string pathToConfigFile = "config.json";
-	std::string queues = "";
-	std::string queue1Priority = "";
-	std::string queue2Priority = "";
+  std::string pathToConfigFile = "config2.json";
+    std::string queues = "";
+    std::string queue1weight = "";
+    std::string queue2weight = "";
+    std::string queue3weight = "";
 
-	bool useV6 = false;
+    bool useV6 = false;
   bool verbose = true;
   Address udpServerInterfaces;
   Address p2pInterfaces;
@@ -38,7 +39,7 @@ main (int argc, char *argv[])
   if (argc != 0) {
     CommandLine cmd;
     cmd.AddValue ("verbose", "Tell application to log if true", verbose);
-  	cmd.AddValue ("config", "Config File", pathToConfigFile);
+    cmd.AddValue ("config", "Config File", pathToConfigFile);
     cmd.Parse (argc,argv);
   }
   // Read config file; take inputstream from the file and put it all in json j
@@ -46,14 +47,19 @@ main (int argc, char *argv[])
   json j;
   jsonIn >> j;
 
+  NodeContainer nodes;
+  nodes.Create (6);
 
-	// Print the pretty json to the terminal
+
+    // Print the pretty json to the terminal
   // std::cout << std::setw(4) << j << std::endl;
 
-	// Get the string value from protocolsToCompress and print it
+
+    // Get the string value from protocolsToCompress and print it
   queues = j["numberOfQueues"].get<std::string>();
-  queue1Priority = j["queue1Priority"].get<std::string>();
-  queue2Priority = j["queue2Priority"].get<std::string>();
+  queue1weight = j["queue1weight"].get<std::string>();
+  queue2weight = j["queue2weight"].get<std::string>();
+  queue3weight = j["queue2weight"].get<std::string>();
   std::string dataRate (std::to_string(4));
   std::cout << "here" << "\n";
   std::cout << queues << "\n";
@@ -66,19 +72,21 @@ main (int argc, char *argv[])
 
   /* Setup p2p Nodes for the IP Link */
   PointToPointHelper pointToPoint;
-  pointToPoint.SetDeviceAttribute ("DataRate", StringValue (dataRate + "Mbps"));
+  //pointToPoint.SetDeviceAttribute ("DataRate", StringValue (dataRate + "Mbps"));
+  pointToPoint.SetChannelAttribute ("Delay", StringValue ("2ms"));
+  pointToPoint.SetQueue("ns3::Spq");
 
   /* Explicitly create the nodes required by the topology (shown above). */
   NS_LOG_INFO ("Create nodes.");
   NodeContainer udpNodes;
-  udpNodes.Create (2);
+  udpNodes.Create (5);
 
-	// p2pNetDevice container
+    // p2pNetDevice container
   NetDeviceContainer p2pDevices = pointToPoint.Install (p2pNodes);
   NS_LOG_INFO ("Create channels.");
-	//
-	// Explicitly create the channels required by the topology (shown above).
-	//
+    //
+    // Explicitly create the channels required by the topology (shown above).
+    //
   CsmaHelper csma;
   csma.SetChannelAttribute ("DataRate", DataRateValue (DataRate (5000000)));
   csma.SetChannelAttribute ("Delay", TimeValue (MilliSeconds (2)));
@@ -91,9 +99,9 @@ main (int argc, char *argv[])
   internet.Install (udpNodes);
   internet.Install (p2pNodes);
 
-	//
-	// We've got the "hardware" in place.  Now we need to add IP addresses.
-	//
+    //
+    // We've got the "hardware" in place.  Now we need to add IP addresses.
+    //
   NS_LOG_INFO ("Assign IP Addresses.");
   if (useV6 == false)
     {
@@ -119,31 +127,66 @@ main (int argc, char *argv[])
 
   NS_LOG_INFO ("Create Applications.");
 
-	//
-	// Create one udpServer applications on node one.
-	//
-  uint16_t port = 4000;
-  uint32_t maxPacketCount = 6000;
-  UdpAppServerHelper server (port);
-  server.SetAttribute ("MaxPackets", UintegerValue (maxPacketCount));
-  ApplicationContainer udpApps = server.Install (udpNodes.Get (1));
-  udpApps.Start (Seconds (0));
-  udpApps.Stop (Seconds (3000.0));
+    /* Create the client and server helpers. 
+We will filter by port for simulation */
 
-	//
-	// Create one UdpClient application to send UDP datagrams from node zero to
-	// node one.
-	//
-  uint32_t MaxPacketSize = 1024;
+ uint32_t maxPacketCount = 6000;
+// Create one udpServer applications on node one.
+
+  uint16_t port1 = 4000;
+  UdpAppServerHelper server1 (port1);
+  server1.SetAttribute ("MaxPackets", UintegerValue (maxPacketCount));
+
+  ApplicationContainer udpApps1 = server1.Install (udpNodes.Get (1));
+  udpApps1.Start (Seconds (0));
+  udpApps1.Stop (Seconds (3000.0));
+
+// Create one udpServer application on node 3.
+  uint16_t port2 = 4080;
+  UdpAppServerHelper server2 (port2);
+  server2.SetAttribute ("MaxPackets", UintegerValue (maxPacketCount));
+  ApplicationContainer udpApps2 = server2.Install (udpNodes.Get (3));
+  udpApps2.Start (Seconds (0));
+  udpApps2.Stop (Seconds (3000.0));
+
+
+// Create one UdpClient application to send UDP datagrams from node zero to
+// node one.
   Time interPacketInterval = Seconds (0.015);
-  UdpAppClientHelper appClient (udpServerInterfaces, port);
+  uint32_t MaxPacketSize = 1024;
+
+  UdpAppClientHelper appClient1 (udpServerInterfaces, port1);
   // UdpAppClientHelper appClient (p2pInterfaces, port);
-  appClient.SetAttribute ("MaxPackets", UintegerValue (maxPacketCount));
-  appClient.SetAttribute ("Interval", TimeValue (interPacketInterval));
-  appClient.SetAttribute ("PacketSize", UintegerValue (MaxPacketSize));
+  appClient1.SetAttribute ("MaxPackets", UintegerValue (maxPacketCount));
+  appClient1.SetAttribute ("Interval", TimeValue (interPacketInterval));
+  appClient1.SetAttribute ("PacketSize", UintegerValue (MaxPacketSize));
   // Install udp client node into the app
-  std::cout << "First round\n";
-  udpApps = appClient.Install (udpNodes.Get (0));
+  std::cout << "First client\n";
+  udpApps1 = appClient1.Install (udpNodes.Get (0));
+
+  UdpAppClientHelper appClient2 (udpServerInterfaces, port2);
+  // UdpAppClientHelper appClient (p2pInterfaces, port);
+  appClient2.SetAttribute ("MaxPackets", UintegerValue (maxPacketCount));
+  appClient2.SetAttribute ("Interval", TimeValue (interPacketInterval));
+  appClient2.SetAttribute ("PacketSize", UintegerValue (MaxPacketSize));
+  // Install udp client node into the app
+  std::cout << "Second client\n";
+  udpApps2 = appClient2.Install (udpNodes.Get (2));
+
+
+  uint16_t port3 = 8000;
+    UdpAppClientHelper appClient3 (udpServerInterfaces, port3);
+  // UdpAppClientHelper appClient (p2pInterfaces, port);
+  appClient2.SetAttribute ("MaxPackets", UintegerValue (maxPacketCount));
+  appClient2.SetAttribute ("Interval", TimeValue (interPacketInterval));
+  appClient2.SetAttribute ("PacketSize", UintegerValue (MaxPacketSize));
+  // Install udp client node into the app
+  std::cout << "Second client\n";
+  udpApps3 = appClient3.Install (udpNodes.Get (4));
+
+
+
+
   // udpApps.Start (Seconds (1200.0));
   // udpApps.Stop (Seconds (3000.0));
 
@@ -151,13 +194,16 @@ main (int argc, char *argv[])
   // appClient.SetFill (udpApps.Get (0), fill, sizeof(fill), 1024);
 
   // Install p2p nodes into the app
-  ApplicationContainer p2pClient = appClient.Install (p2pNodes.Get (0));
+  /* Application container holds everything. Not sure how to do this */
+  ApplicationContainer p2pClient = appClient1.Install (p2pNodes.Get (0));
+  ApplicationContainer p2pClient2 = appClient1.Install (p2pNodes.Get (0));
   // p2pClient.Start (Seconds (2.0));
   // p2pClient.Stop (Seconds (300.0));
 
-	// #if 0
-	// set fill for packet data
-	// #endif
+
+    // #if 0
+    // set fill for packet data
+    // #endif
 
   // Init routers (PointToPoint devices)
   Ipv4GlobalRoutingHelper::PopulateRoutingTables ();
@@ -167,14 +213,13 @@ main (int argc, char *argv[])
   csma.EnablePcapAll ("udp-app-l", false);
   pointToPoint.EnablePcapAll ("udp-p2p-l", false);
 
-	//
-	// Now, do the actual simulation.
-	//
+    //
+    // Now, do the actual simulation.
+    //
   NS_LOG_INFO ("Run Simulation.");
 
   Simulator::Run ();
   Simulator::Destroy ();
   return 0;
 }
-
 
