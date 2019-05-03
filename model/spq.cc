@@ -34,8 +34,15 @@ std::cout << "Constructor\n";
     SourcePortNumberFilter srcPortFilter2;
 	srcPortFilter1.SetPort(4000);
 	srcPortFilter2.SetPort(6000);
-	filter1->set_element(srcPortFilter1);
-	filter2->set_element(srcPortFilter2);
+
+    std::vector<FilterElement*> elements1;
+    std::vector<FilterElement*> elements2;
+
+    elements1.push_back(&srcPortFilter1);
+    elements2.push_back(&srcPortFilter2);
+
+	filter1->SetFilterElements(elements1);
+	filter2->SetFilterElements(elements2);
 
 	/* So whatever is running on Port 4000 is Low Priority */
 

@@ -4,6 +4,7 @@
 
 #include "diffserv.h"
 #include "trafficclass.h"
+#include "SourcePortNumberFilter.h"
 
 
 namespace ns3 {
