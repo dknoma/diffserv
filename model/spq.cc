@@ -21,6 +21,7 @@ std::cout << "Constructor\n";
 	trafficClassLow -> SetIsDefault(true);
 
 	/* Add them to q_class */
+	/* Low is 0 */
     this->q_class.push_back(trafficClassLow);
     this->q_class.push_back(trafficClassHigh);
 
@@ -28,8 +29,15 @@ std::cout << "Constructor\n";
     Filter* filter1 = new Filter();
     Filter* filter2 = new Filter();
 
-    /* TODO: Set the filters. Can also do this in the example but this is easier */
+    /* Set the filters. Can also do this in the example but this is easier */
+    SourcePortNumberFilter srcPortFilter1;
+    SourcePortNumberFilter srcPortFilter2;
+	srcPortFilter1.SetPort(4000);
+	srcPortFilter2.SetPort(6000);
+	filter1->set_element(srcPortFilter1);
+	filter2->set_element(srcPortFilter2);
 
+	/* So whatever is running on Port 4000 is Low Priority */
 
     /* Adding these filters to test against */
     q_class[0]->AddFilter(filter1);
