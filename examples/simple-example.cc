@@ -90,6 +90,7 @@ main (int argc, char *argv[])
   trafficClassPointer1 -> AddFilter(filter_p);
   trafficClassPointer2 -> AddFilter(filter_p2);
   spq.DoEnqueue(packet);
+  std::cout << "Enqueued" << "\n";
   spq.DoDequeue();
   Drr drr;
 

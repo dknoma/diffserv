@@ -60,6 +60,8 @@ public:
 	bool Enqueue(Ptr<Item> T);
 	Ptr<Item> Dequeue(void);
 
+	bool IsEmpty();
+
 	/* Match */
 	bool match (Ptr<Item> T);
 
@@ -71,11 +73,12 @@ private:
 	uint32_t maxPackets;
 	uint32_t maxBytes;
 
-	/* Applicable is QOS uses weight, DRR */
+	/* Applicable QOS uses weight, DRR */
 	double weight;
 
-	/* Applicable is QOS uses priority level, SPQ */
+	/* Applicable QOS uses priority level, SPQ */
 	int priority_level;
+	int deficit_counter;
 	/* One queue that will take over the packets if packet comes in and 
 	does not match any of the other classes */
 	bool isDefault;

@@ -44,6 +44,9 @@ main (int argc, char *argv[])
   json j;
   jsonIn >> j;
 
+  NodeContainer nodes;
+  nodes.Create (5);
+
 
 	// Print the pretty json to the terminal
   // std::cout << std::setw(4) << j << std::endl;
@@ -136,6 +139,7 @@ We will filter by port for simulation */
   uint16_t port1 = 4000;
   UdpAppServerHelper server1 (port1);
   server1.SetAttribute ("MaxPackets", UintegerValue (maxPacketCount));
+
   ApplicationContainer udpApps1 = server1.Install (udpNodes.Get (1));
   udpApps1.Start (Seconds (0));
   udpApps1.Stop (Seconds (3000.0));

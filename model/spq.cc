@@ -87,8 +87,7 @@ Ptr<Item> Spq<Item>::DoDequeue(void) {
 	dequeue from that one. Else dequeue from the other one */
 
 	/* Never came across the high priority queue */
-	return T;
-	
+	return T;	
 };
 
 /* Get most recent Packet but do not remove */

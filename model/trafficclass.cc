@@ -18,7 +18,13 @@ TypeId TrafficClass<Item>::GetTypeId (void) {
 template <typename Item>
 TrafficClass<Item>::TrafficClass()
 {
-
+    packets = 0;
+    bytes = 0;
+    maxBytes = 1000000;
+    maxPackets = 100000;
+    weight = 1; 
+    priority_level = 0; 
+    isDefault = false;
 }
 
 template <typename Item>
@@ -76,6 +82,15 @@ bool TrafficClass<Item>::GetIsDefault()
 }
 
 template <typename Item>
+bool TrafficClass<Item>::IsEmpty()
+{
+	if (this->packets == 0) {
+		return true;
+	}
+	return false;
+}
+
+template <typename Item>
 void TrafficClass<Item>::SetIsDefault(bool p)
 {
 	this -> isDefault = p;
@@ -87,17 +102,51 @@ void TrafficClass<Item>::AddFilter(Filter *f)
 	this -> filters.push_back(f);
 }
 
+// template <typename Item>
+// bool TrafficClass<Item>::Enqueue(Ptr<Item> T)
+// {
+// 	Ptr<Packet> packet = (Ptr<Packet>) T;
+//     if (packets + 1 > maxPackets || bytes + packet->GetSize() > maxBytes) {
+//         return false;
+//     } else {
+//     	return this -> Enqueue(T);
+//     }
+// 	/* Add to Queue */
+//     m_queue.push(packet);
+
+//     /* Add Bytes/Packets */
+//     this->packets++;
+//     this->bytes += packet->GetSize();
+//     return true;
+// }
+
 template <typename Item>
 bool TrafficClass<Item>::Enqueue(Ptr<Item> T)
 {
-	return this -> Enqueue(T);
+  return this -> Enqueue(T);
 }
 
 template <typename Item>
 Ptr<Item> TrafficClass<Item>::Dequeue(void)
 {
-	return this -> Dequeue ();
+  return this -> Dequeue ();
 }
+
+
+// template <typename Item>
+// Ptr<Item> TrafficClass<Item>::Dequeue(void)
+// {
+// 	if (m_queue.empty()) {
+//         return NULL;
+//     } else {
+//     	 Get packet from front of Queue 
+//         Ptr <Packet> packet = m_queue.front();
+//         m_queue.pop();
+//         packets--;
+//         bytes -= packet->GetSize();
+//         return packet;
+//     }
+// }
 
 template <typename Item>
 bool TrafficClass<Item>::match(Ptr<Item> T)
