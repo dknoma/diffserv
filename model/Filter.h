@@ -46,12 +46,12 @@ public:
   std::vector<FilterElement*> elements;
 
   Filter ();
-  Filter (std::vector<FilterElement*> *filterElements);
+  Filter (std::vector<FilterElement*> filterElements);
   virtual ~Filter ();
 
 
   bool Match(Ptr<ns3::Packet> packet);
-  void SetFilterElements(std::vector<FilterElement*> *filterElements);
+  void SetFilterElements(std::vector<FilterElement*> filterElements);
 
 };
 

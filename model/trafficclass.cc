@@ -20,11 +20,13 @@ TrafficClass<Item>::TrafficClass()
 {
     packets = 0;
     bytes = 0;
-    maxBytes = 1000000;
+    maxBytes = 100000000;
     maxPackets = 100000;
     weight = 1; 
     priority_level = 0; 
     isDefault = false;
+    filters = std::vector<Filter*>();
+    m_queue = std::queue<Ptr<Packet>>();
 }
 
 template <typename Item>
@@ -103,25 +105,24 @@ void TrafficClass<Item>::AddFilter(Filter *f)
 }
 
 template <typename Item>
-bool TrafficClass<Item>::Enqueue(Ptr<Item> T)
+bool TrafficClass<Item>::Enqueue(Ptr<Packet> T)
 {	
 	// std::cout << "Enqueue tc\n";
-	Ptr<Packet> packet = (Ptr<Packet>) T;
     // if (packets + 1 > maxPackets || bytes + packet->GetSize() > maxBytes) {
     //     return false;
     // }
 	/* Add to Queue */
-    m_queue.push(packet);
+    m_queue.push(T);
 
     /* Add Bytes/Packets */
     this->packets++;
-    this->bytes += packet->GetSize();
+    this->bytes += T->GetSize();
     return true;
 }
 
 
 template <typename Item>
-Ptr<Item> TrafficClass<Item>::Dequeue(void)
+Ptr<Packet> TrafficClass<Item>::Dequeue(void)
 {
 	if (m_queue.empty()) {
     	// std::cout << "null? \n";
@@ -138,7 +139,7 @@ Ptr<Item> TrafficClass<Item>::Dequeue(void)
 }
 
 template <typename Item>
-bool TrafficClass<Item>::match(Ptr<Item> T)
+bool TrafficClass<Item>::match(Ptr<Packet> T)
 {
     // std::cout << "TC match\n";
 	/* Check filter to see if packet matches */
@@ -147,14 +148,17 @@ bool TrafficClass<Item>::match(Ptr<Item> T)
  //        std::cout << "checking tc matches\n";
  //    	matching = matching || filters[i] -> Match(T);
  //    	std::cout << matching << std::endl;
-	// }
-
+	// } 
     std::cout << "filter size: " << filters.size() << "\n";
 	for(uint32_t i = 0; i < filters.size(); i++)
 	  {
 	    std::cout << "filter[" << i << "]\n";
         // std::cout << "checking tc matches\n";
-	    matching = matching || filters.at(i) -> Match(T); // Matches at least one of the filter elements
+        std::cout << "matching " << matching << "]\n";
+        std::cout << "p " << T -> ToString() << "\n";
+        std::cout << "filters " << filters.at(i) << "\n";
+        std::cout << "filters " << filters.at(i) << "\n";
+	    matching = filters.at(i) -> Match(T) || matching; // Matches at least one of the filter elements
     	// std::cout << matching << std::endl;
 	  }
 

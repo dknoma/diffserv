@@ -14,32 +14,33 @@ NS_OBJECT_TEMPLATE_CLASS_DEFINE (Spq, Packet);
 template <typename Item>
 Spq<Item>::Spq()
 {
+std::vector<TrafficClass<Packet>*> q_class;
 std::cout << "Constructor\n";
 /* Need to create the high priority and low priority traffic classes first */
-  TrafficClass<Packet>* trafficClassLow = new TrafficClass<Packet>();
-	TrafficClass<Packet>* trafficClassHigh = new TrafficClass<Packet>();
-	/* Set the first one (0) to be default */
-	trafficClassLow -> SetIsDefault(true);
-  trafficClassHigh -> SetPriorityLevel(1);
+TrafficClass<Packet>* trafficClassLow = new TrafficClass<Packet>();
+TrafficClass<Packet>* trafficClassHigh = new TrafficClass<Packet>();
+/* Set the first one (0) to be default */
+trafficClassLow -> SetIsDefault(true);
+trafficClassHigh -> SetPriorityLevel(1);
 
   /* Create the filters. They'll just be hardcoded for now */
   // Filter* filter1 = new Filter();
   // Filter* filter2 = new Filter();
 
   /* Set the filters. Can also do this in the example but this is easier */
-  SourcePortNumberFilter srcPortFilter1;
-  SourcePortNumberFilter srcPortFilter2;
-	srcPortFilter1.SetPort(4000);
-	srcPortFilter2.SetPort(6000);
+  SourcePortNumberFilter* srcPortFilter1 = new SourcePortNumberFilter();
+  SourcePortNumberFilter* srcPortFilter2 = new SourcePortNumberFilter();
+  srcPortFilter1->SetPort(4000);
+  srcPortFilter2->SetPort(6000);
 
   std::vector<FilterElement*> elements1;
   std::vector<FilterElement*> elements2;
 
-  elements1.push_back(&srcPortFilter1);
-  elements2.push_back(&srcPortFilter2);
+  elements1.push_back(srcPortFilter1);
+  elements2.push_back(srcPortFilter2);
   
-  Filter* filter1 = new Filter(&elements1);
-  Filter* filter2 = new Filter(&elements2);
+  Filter* filter1 = new Filter(elements1);
+  Filter* filter2 = new Filter(elements2);
 
 	// filter1->SetFilterElements(elements1);
 	// filter2->SetFilterElements(elements2);
@@ -188,6 +189,8 @@ uint32_t Spq<Item>::Classify(Ptr<Item> p)
     // std::cout << "Classify\n";
 	Ptr<Packet> packet = (Ptr<Packet>)p;
   for (int i = 0; i < (int) this -> q_class.size(); i++) {
+    std::cout << "Classifying\n";
+    std:: cout << this->q_class[i] << "\n";
       // std::cout << "checking matches\n";
       if (this->q_class[i]->match(packet)) {
           std::cout << "Match\n";
