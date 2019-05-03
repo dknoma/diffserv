@@ -108,8 +108,6 @@ bool TrafficClass<Item>::Enqueue(Ptr<Item> T)
 	Ptr<Packet> packet = (Ptr<Packet>) T;
     if (packets + 1 > maxPackets || bytes + packet->GetSize() > maxBytes) {
         return false;
-    } else {
-    	return this -> Enqueue(T);
     }
 	/* Add to Queue */
     m_queue.push(packet);
@@ -127,7 +125,7 @@ Ptr<Item> TrafficClass<Item>::Dequeue(void)
 	if (m_queue.empty()) {
         return NULL;
     } else {
-    	 Get packet from front of Queue 
+    	// Get packet from front of Queue 
         Ptr <Packet> packet = m_queue.front();
         m_queue.pop();
         packets--;
