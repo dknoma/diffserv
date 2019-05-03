@@ -54,20 +54,20 @@ SourcePortNumberFilter::GetTypeId (void)
 // Constructors
 SourcePortNumberFilter::SourcePortNumberFilter ()
 {
+  std::cout << "Source port number filter constructor" << "\n";
   NS_LOG_FUNCTION (this);
 }
 
 SourcePortNumberFilter::~SourcePortNumberFilter()
 {
-
   NS_LOG_FUNCTION (this);
 }
 
 bool 
 SourcePortNumberFilter::Match (Ptr<ns3::Packet> packet)
 {
-  NS_LOG_FUNCTION (this << packet);
-  // std::cout << "THIS IS A SOURCE PORT FILTER ELEMENT\n";
+  //NS_LOG_FUNCTION (this << packet);
+  std::cout << "THIS IS A SOURCE PORT FILTER ELEMENT << \n";
   Ptr<ns3::Packet> copy = packet->Copy();
   if (copy->GetSize() == 0)
   {

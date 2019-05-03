@@ -32,7 +32,7 @@ Drr::Drr()
     /* Adding these filters to test against */
     q_class[0]->AddFilter(filter1);
     q_class[1]->AddFilter(filter2);
-    q_class[1]->AddFilter(filter3);
+    q_class[2]->AddFilter(filter3);
 }
 
 Drr::~Drr ()

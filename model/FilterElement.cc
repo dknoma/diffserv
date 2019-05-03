@@ -59,6 +59,7 @@ FilterElement::~FilterElement()
 bool 
 FilterElement::Match (Ptr<ns3::Packet> packet)
 {
+  std::cout << "Filter Element Match called" << "\n";
   NS_LOG_FUNCTION (this << packet);
   return false;
 }

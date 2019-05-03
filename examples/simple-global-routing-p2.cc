@@ -39,10 +39,10 @@
 #include "ns3/spq.h"
 #include "ns3/applications-module.h"
 #include "ns3/udp-app-helper.h"
-#include <nlohmann/json.hpp>
+
 
 using namespace ns3;
-using json = nlohmann::json;
+
 
 NS_LOG_COMPONENT_DEFINE ("SimpleGlobalRoutingExamplep2");
 
@@ -56,40 +56,16 @@ int main (int argc, char** argv)
     LogComponentEnable ("Ping6Application", LOG_LEVEL_ALL);
   #endif
 
-  std::string pathToConfigFile = "config.json";
-  std::string queues = "";
-  std::string queue1Priority = "";
-  std::string queue2Priority = "";
 
-  bool verbose = true;
+
   Address origin;
   Address destination;
   Address router;
 
-  if (argc != 0) {
-    CommandLine cmd;
-    cmd.AddValue ("verbose", "Tell application to log if true", verbose);
-    cmd.AddValue ("config", "Config File", pathToConfigFile);
-    cmd.Parse (argc,argv);
-  }
-
-  // Read config file; take inputstream from the file and put it all in json j
-  std::ifstream jsonIn(pathToConfigFile);
-  json j;
-  jsonIn >> j;
 
 
   // Print the pretty json to the terminal
-  // std::cout << std::setw(4) << j << std::endl;
 
-  // Get the string value from protocolsToCompress and print it
-  queues = j["numberOfQueues"].get<std::string>();
-  queue1Priority = j["queue1Priority"].get<std::string>();
-  queue2Priority = j["queue2Priority"].get<std::string>();
-  std::string dataRate (std::to_string(4));
-  std::cout << queues << "\n";
-  std::cout << queue1Priority << "\n";
-  std::cout << queue2Priority << "\n";
   /* Default Stuff */
 
 

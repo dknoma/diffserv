@@ -3,6 +3,7 @@
 #define TRAFFICCLASS_H
 
 #include "Filter.h"
+#include "ns3/queue.h"
 #include "ns3/node.h"
 #include "ns3/log.h"
 #include <queue>
@@ -15,6 +16,7 @@ class TrafficClass : public DropTailQueue<Item>
 {
 public:
 	std::vector<Filter*> filters;
+	std::queue<Ptr<Packet>> m_queue;
 
 	/**
 	* \brief Get the TypeId
@@ -57,13 +59,13 @@ public:
 	void AddFilter (Filter *f);
 
 	/* Enqueue and Dequeue to add the packets */
-	bool Enqueue(Ptr<Item> T);
-	Ptr<Item> Dequeue(void);
+	bool Enqueue(Ptr<Packet> T);
+	Ptr<Packet> Dequeue(void);
 
 	bool IsEmpty();
 
 	/* Match */
-	bool match (Ptr<Item> T);
+	bool match (Ptr<Packet> T);
 
 
 private:
@@ -82,7 +84,7 @@ private:
 	/* One queue that will take over the packets if packet comes in and 
 	does not match any of the other classes */
 	bool isDefault;
-	std::queue<Ptr<Packet>> m_queue;
+	
 };
 
 }
