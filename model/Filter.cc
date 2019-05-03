@@ -63,6 +63,12 @@ Filter::~Filter()
   NS_LOG_FUNCTION (this);
 }
 
+Filter::Filter (std::vector<FilterElement*> *filterElements)
+{
+  NS_LOG_FUNCTION (this);
+  elements = *filterElements;
+}
+
 bool 
 Filter::Match (Ptr<ns3::Packet> packet)
 {
@@ -71,18 +77,20 @@ Filter::Match (Ptr<ns3::Packet> packet)
   // Elements ^/AND each other. HAS to satisfy ALL filter elements for this specific filter
   bool matching = true;
   // for (std::vector<FilterElement*>::iterator i = elements.begin(); i != elements.end(); ++i)
+    std::cout << "filter element size: " << elements.size() << "\n";
   for(uint32_t i = 0; i < elements.size(); i++)
   {
-    // std::cout << "filter element[" << i << "]\n";
+    std::cout << "filter element[" << i << "]\n";
     matching = matching && elements.at(i) -> Match(packet); // Matches at least one of the filter elements
   }
+  std::cout << matching << std::endl;
   return matching;
 }
 
 void
-Filter::SetFilterElements(std::vector<FilterElement*> filterElements)
+Filter::SetFilterElements(std::vector<FilterElement*> *filterElements)
 {
   NS_LOG_FUNCTION (this);
-  elements = filterElements;
+  elements = *filterElements;
 }
 } // Namespace ns3

@@ -18,6 +18,7 @@ TypeId TrafficClass<Item>::GetTypeId (void) {
 template <typename Item>
 TrafficClass<Item>::TrafficClass()
 {
+	std::vector<Filter*> filters;
     packets = 0;
     bytes = 0;
     maxBytes = 1000000;
@@ -97,20 +98,20 @@ void TrafficClass<Item>::SetIsDefault(bool p)
 }
 
 template <typename Item>
-void TrafficClass<Item>::AddFilter(Filter *f)
+void TrafficClass<Item>::AddFilter(Filter f)
 {
-	this -> filters.push_back(f);
+	filters.push_back(&f);
+	std::cout << "sizu: " << filters.size() << "\n";
 }
 
 template <typename Item>
 bool TrafficClass<Item>::Enqueue(Ptr<Item> T)
-{
+{	
+	// std::cout << "Enqueue tc\n";
 	Ptr<Packet> packet = (Ptr<Packet>) T;
-    if (packets + 1 > maxPackets || bytes + packet->GetSize() > maxBytes) {
-        return false;
-    } else {
-    	return this -> Enqueue(T);
-    }
+    // if (packets + 1 > maxPackets || bytes + packet->GetSize() > maxBytes) {
+    //     return false;
+    // }
 	/* Add to Queue */
     m_queue.push(packet);
 
@@ -125,9 +126,11 @@ template <typename Item>
 Ptr<Item> TrafficClass<Item>::Dequeue(void)
 {
 	if (m_queue.empty()) {
-        return NULL;
+    	// std::cout << "null? \n";
+        return 0;
     } else {
-    	 Get packet from front of Queue 
+    	// Get packet from front of Queue 
+    	// std::cout << "non-empty? \n";
         Ptr <Packet> packet = m_queue.front();
         m_queue.pop();
         packets--;
@@ -139,17 +142,30 @@ Ptr<Item> TrafficClass<Item>::Dequeue(void)
 template <typename Item>
 bool TrafficClass<Item>::match(Ptr<Item> T)
 {
+    // std::cout << "TC match\n";
 	/* Check filter to see if packet matches */
 	bool matching = false;
-	for(std::vector<Filter*>::size_type i = 0; i != this -> filters.size(); i++) {
-    	matching = matching || filters[i] -> Match(T);
-    	std::cout << matching << std::endl;
-	}
+	// for(std::vector<Filter*>::size_type i = 0; i != this -> filters.size(); i++) {
+ //        std::cout << "checking tc matches\n";
+ //    	matching = matching || filters[i] -> Match(T);
+ //    	std::cout << matching << std::endl;
+	// }
+
+    std::cout << "filter size: " << filters.size() << "\n";
+	for(uint32_t i = 0; i < filters.size(); i++)
+	  {
+	    std::cout << "filter[" << i << "]\n";
+        // std::cout << "checking tc matches\n";
+	    matching = matching || filters.at(i) -> Match(T); // Matches at least one of the filter elements
+    	// std::cout << matching << std::endl;
+	  }
+
 	/* Add to internal queue if it's a match */
 
 	/* And return true if it's a match */
 
 	/* Return false if now */
+  	std::cout << matching << std::endl;
 	return matching;
 }
 template class TrafficClass<Packet>;

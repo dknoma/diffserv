@@ -41,8 +41,10 @@ public:
 	std::vector<TrafficClass<Packet>*> q_class;
 	virtual ~Spq ();
 	bool DoEnqueue(Ptr<Item> T);
+	bool Enqueue(Ptr<Item> T) override;
 	Ptr<const Item> DoPeek();
 	Ptr<Item> DoDequeue(void);
+	Ptr<Item> Dequeue(void);
 	Ptr<Item> Schedule(); 
 	uint32_t Classify(Ptr<Item> p);
 };

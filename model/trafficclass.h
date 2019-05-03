@@ -3,6 +3,7 @@
 #define TRAFFICCLASS_H
 
 #include "Filter.h"
+#include "ns3/queue.h"
 #include "ns3/node.h"
 #include "ns3/log.h"
 #include <queue>
@@ -54,7 +55,7 @@ public:
 	uint32_t GetSizeBytes(void);
 
 	/* Add Filter to Filters Vector, may or may not need */
-	void AddFilter (Filter *f);
+	void AddFilter (Filter f);
 
 	/* Enqueue and Dequeue to add the packets */
 	bool Enqueue(Ptr<Item> T);
