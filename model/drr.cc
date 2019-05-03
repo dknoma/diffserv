@@ -9,30 +9,53 @@ NS_LOG_COMPONENT_DEFINE ("Drr");
 /* Constructor and Deconstructor */
 Drr::Drr()
 {
+
+    std::vector<TrafficClass<Packet>*> q_class;
+    std::cout << "Constructor\n";
+
 	/* Add the three traffic classes this time */
-	TrafficClass<Packet>* trafficClass1 = new TrafficClass<Packet>();
-	TrafficClass<Packet>* trafficClass2 = new TrafficClass<Packet>();
-	TrafficClass<Packet>* trafficClass3 = new TrafficClass<Packet>();
+	TrafficClass<Packet>* trafficClass1 = new TrafficClass<Packet>(); // 4000
+	TrafficClass<Packet>* trafficClass2 = new TrafficClass<Packet>(); // 6000
+	TrafficClass<Packet>* trafficClass3 = new TrafficClass<Packet>(); // 8000
 	/* Set the first one (0) to be default */
 	trafficClass1 -> SetIsDefault(true);
+    trafficClass1 -> SetWeight(1.0);
+    trafficClass2 -> SetWeight(2.0);
+    trafficClass3 -> SetWeight(3.0);
 
-	/* Add them to q_class */
+      /* Set the filters. Can also do this in the example but this is easier */
+    DestinationPortNumberFilter* srcPortFilter1 = new DestinationPortNumberFilter();
+    DestinationPortNumberFilter* srcPortFilter2 = new DestinationPortNumberFilter();
+    DestinationPortNumberFilter* srcPortFilter3 = new DestinationPortNumberFilter();
+    srcPortFilter1->SetPort(4000);
+    srcPortFilter2->SetPort(6000);
+    srcPortFilter2->SetPort(8000);
+
+
+    std::vector<FilterElement*> elements1;
+    std::vector<FilterElement*> elements2;
+    std::vector<FilterElement*> elements3;
+
+
+    elements1.push_back(srcPortFilter1);
+    elements2.push_back(srcPortFilter2);
+    elements3.push_back(srcPortFilter3);
+
+    Filter* filter1 = new Filter(elements1);
+    Filter* filter2 = new Filter(elements2);
+    Filter* filter3 = new Filter(elements3);
+
+    /* Adding these filters to test against */
+    trafficClass1->AddFilter(filter1);
+    trafficClass2->AddFilter(filter2);
+    trafficClass3->AddFilter(filter2);
+    // q_class[0]->AddFilter(filter1);
+    // q_class[1]->AddFilter(filter2);
+    /* Add them to q_class */
+
     this->q_class.push_back(trafficClass1);
     this->q_class.push_back(trafficClass2);
     this->q_class.push_back(trafficClass3);
-
-    /* Create the filters. They'll just be hardcoded for now */
-    Filter* filter1 = new Filter();
-    Filter* filter2 = new Filter();
-    Filter* filter3 = new Filter();
-
-    /* TODO: Set the filters. Can also do this in the example but this is easier */
-
-
-    /* Adding these filters to test against */
-    q_class[0]->AddFilter(filter1);
-    q_class[1]->AddFilter(filter2);
-    q_class[2]->AddFilter(filter3);
 }
 
 Drr::~Drr ()
