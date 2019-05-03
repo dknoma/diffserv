@@ -16,21 +16,15 @@ Spq<Item>::Spq()
 {
 std::cout << "Constructor\n";
 /* Need to create the high priority and low priority traffic classes first */
- //  TrafficClass<Packet>* trafficClassLow = new TrafficClass<Packet>();
-	// TrafficClass<Packet>* trafficClassHigh = new TrafficClass<Packet>();
-  TrafficClass<Packet> trafficClassLow;
-  TrafficClass<Packet> trafficClassHigh;
+  TrafficClass<Packet>* trafficClassLow = new TrafficClass<Packet>();
+	TrafficClass<Packet>* trafficClassHigh = new TrafficClass<Packet>();
 	/* Set the first one (0) to be default */
-	// trafficClassLow -> SetIsDefault(true);
- //  trafficClassHigh -> SetPriorityLevel(1);
-  trafficClassLow.SetIsDefault(true);
-  trafficClassHigh.SetPriorityLevel(1);
+	trafficClassLow -> SetIsDefault(true);
+  trafficClassHigh -> SetPriorityLevel(1);
 
   /* Create the filters. They'll just be hardcoded for now */
   // Filter* filter1 = new Filter();
   // Filter* filter2 = new Filter();
-  // Filter filter1;
-  // Filter filter2;
 
   /* Set the filters. Can also do this in the example but this is easier */
   SourcePortNumberFilter srcPortFilter1;
@@ -43,26 +37,24 @@ std::cout << "Constructor\n";
 
   elements1.push_back(&srcPortFilter1);
   elements2.push_back(&srcPortFilter2);
+  
+  Filter* filter1 = new Filter(&elements1);
+  Filter* filter2 = new Filter(&elements2);
 
-  std::cout << "elements1 size: " << elements1.size() << "\n";
+	// filter1->SetFilterElements(elements1);
+	// filter2->SetFilterElements(elements2);
 
-  Filter filter1(&elements1);
-  Filter filter2(&elements2);
-	// filter1.SetFilterElements(&elements1);
-	// filter2.SetFilterElements(&elements2);
 	/* So whatever is running on Port 4000 is Low Priority */
 
   /* Adding these filters to test against */
-  // trafficClassLow->AddFilter(filter1);
-  // trafficClassHigh->AddFilter(filter2);
-  trafficClassLow.AddFilter(filter1);
-  trafficClassHigh.AddFilter(filter2);
+  trafficClassLow->AddFilter(filter1);
+  trafficClassHigh->AddFilter(filter2);
   // q_class[0]->AddFilter(filter1);
   // q_class[1]->AddFilter(filter2);
   /* Add them to q_class */
   /* Low is 0 */
-  q_class.push_back(&trafficClassLow);
-  q_class.push_back(&trafficClassHigh);
+  this->q_class.push_back(trafficClassLow);
+  this->q_class.push_back(trafficClassHigh);
 }
 template <typename Item>
 Spq<Item>::~Spq ()
@@ -195,9 +187,9 @@ uint32_t Spq<Item>::Classify(Ptr<Item> p)
 	/* Decide which queue to inert this packet into */
     // std::cout << "Classify\n";
 	Ptr<Packet> packet = (Ptr<Packet>)p;
-  for (int i = 0; i < (int) q_class.size(); i++) {
-      std::cout << "asfaasf " << q_class[i]->GetPackets() << "\n";
-      if (q_class[i]->match(packet)) {
+  for (int i = 0; i < (int) this -> q_class.size(); i++) {
+      // std::cout << "checking matches\n";
+      if (this->q_class[i]->match(packet)) {
           std::cout << "Match\n";
           return i;
       }

@@ -18,7 +18,6 @@ TypeId TrafficClass<Item>::GetTypeId (void) {
 template <typename Item>
 TrafficClass<Item>::TrafficClass()
 {
-	std::vector<Filter*> filters;
     packets = 0;
     bytes = 0;
     maxBytes = 1000000;
@@ -98,10 +97,9 @@ void TrafficClass<Item>::SetIsDefault(bool p)
 }
 
 template <typename Item>
-void TrafficClass<Item>::AddFilter(Filter f)
+void TrafficClass<Item>::AddFilter(Filter *f)
 {
-	filters.push_back(&f);
-	std::cout << "sizu: " << filters.size() << "\n";
+	this -> filters.push_back(f);
 }
 
 template <typename Item>

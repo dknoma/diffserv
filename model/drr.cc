@@ -22,9 +22,9 @@ Drr::Drr()
     this->q_class.push_back(trafficClass3);
 
     /* Create the filters. They'll just be hardcoded for now */
-    Filter filter1;
-    Filter filter2;
-    Filter filter3;
+    Filter* filter1 = new Filter();
+    Filter* filter2 = new Filter();
+    Filter* filter3 = new Filter();
 
     /* TODO: Set the filters. Can also do this in the example but this is easier */
 
