@@ -102,51 +102,39 @@ void TrafficClass<Item>::AddFilter(Filter *f)
 	this -> filters.push_back(f);
 }
 
-// template <typename Item>
-// bool TrafficClass<Item>::Enqueue(Ptr<Item> T)
-// {
-// 	Ptr<Packet> packet = (Ptr<Packet>) T;
-//     if (packets + 1 > maxPackets || bytes + packet->GetSize() > maxBytes) {
-//         return false;
-//     } else {
-//     	return this -> Enqueue(T);
-//     }
-// 	/* Add to Queue */
-//     m_queue.push(packet);
-
-//     /* Add Bytes/Packets */
-//     this->packets++;
-//     this->bytes += packet->GetSize();
-//     return true;
-// }
-
 template <typename Item>
 bool TrafficClass<Item>::Enqueue(Ptr<Item> T)
 {
-  return this -> Enqueue(T);
+	Ptr<Packet> packet = (Ptr<Packet>) T;
+    if (packets + 1 > maxPackets || bytes + packet->GetSize() > maxBytes) {
+        return false;
+    } else {
+    	return this -> Enqueue(T);
+    }
+	/* Add to Queue */
+    m_queue.push(packet);
+
+    /* Add Bytes/Packets */
+    this->packets++;
+    this->bytes += packet->GetSize();
+    return true;
 }
+
 
 template <typename Item>
 Ptr<Item> TrafficClass<Item>::Dequeue(void)
 {
-  return this -> Dequeue ();
+	if (m_queue.empty()) {
+        return NULL;
+    } else {
+    	 Get packet from front of Queue 
+        Ptr <Packet> packet = m_queue.front();
+        m_queue.pop();
+        packets--;
+        bytes -= packet->GetSize();
+        return packet;
+    }
 }
-
-
-// template <typename Item>
-// Ptr<Item> TrafficClass<Item>::Dequeue(void)
-// {
-// 	if (m_queue.empty()) {
-//         return NULL;
-//     } else {
-//     	 Get packet from front of Queue 
-//         Ptr <Packet> packet = m_queue.front();
-//         m_queue.pop();
-//         packets--;
-//         bytes -= packet->GetSize();
-//         return packet;
-//     }
-// }
 
 template <typename Item>
 bool TrafficClass<Item>::match(Ptr<Item> T)

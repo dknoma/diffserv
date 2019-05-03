@@ -15,8 +15,8 @@ Spq<Item>::Spq()
 {
 std::cout << "Constructor\n";
 /* Need to create the high priority and low priority traffic classes first */
+    TrafficClass<Packet>* trafficClassLow = new TrafficClass<Packet>();
 	TrafficClass<Packet>* trafficClassHigh = new TrafficClass<Packet>();
-	TrafficClass<Packet>* trafficClassLow = new TrafficClass<Packet>();
 	/* Set the first one (0) to be default */
 	trafficClassLow -> SetIsDefault(true);
 
@@ -132,6 +132,7 @@ uint32_t Spq<Item>::Classify(Ptr<Item> p) {
 	Ptr<Packet> packet = (Ptr<Packet>)p;
     for (int i = 0; i < (int) this -> q_class.size(); i++) {
         if (this->q_class[i]->match(packet)) {
+            std::cout << "Match\n";
             return i;
         }
     }
