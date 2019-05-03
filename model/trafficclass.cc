@@ -148,11 +148,11 @@ bool TrafficClass<Item>::match(Ptr<Packet> T)
  //    	matching = matching || filters[i] -> Match(T);
  //    	std::cout << matching << std::endl;
 	// } 
-    std::cout << "filter size: " << filters.size() << "\n";
+    // std::cout << "filter size: " << filters.size() << "\n";
 	for(uint32_t i = 0; i < filters.size(); i++)
 	  {
 	    matching = filters.at(i) -> Match(T) || matching; // Matches at least one of the filter elements
-    	std::cout << "Match? " << matching << std::endl;
+    	// std::cout << "Match? " << matching << std::endl;
 	  }
 
 	/* Add to internal queue if it's a match */
@@ -160,7 +160,7 @@ bool TrafficClass<Item>::match(Ptr<Packet> T)
 	/* And return true if it's a match */
 
 	/* Return false if now */
-  	std::cout << matching << std::endl;
+  	// std::cout << matching << std::endl;
 	return matching;
 }
 template class TrafficClass<Packet>;

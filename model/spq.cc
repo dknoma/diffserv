@@ -15,14 +15,14 @@ NS_OBJECT_TEMPLATE_CLASS_DEFINE (Spq, Packet);
 template <typename Item>
 Spq<Item>::Spq()
 {
-std::vector<TrafficClass<Packet>*> q_class;
-std::cout << "Constructor\n";
-/* Need to create the high priority and low priority traffic classes first */
-TrafficClass<Packet>* trafficClassLow = new TrafficClass<Packet>();
-TrafficClass<Packet>* trafficClassHigh = new TrafficClass<Packet>();
-/* Set the first one (0) to be default */
-trafficClassLow -> SetIsDefault(true);
-trafficClassHigh -> SetPriorityLevel(1);
+  std::vector<TrafficClass<Packet>*> q_class;
+  std::cout << "Constructor\n";
+  /* Need to create the high priority and low priority traffic classes first */
+  TrafficClass<Packet>* trafficClassLow = new TrafficClass<Packet>();
+  TrafficClass<Packet>* trafficClassHigh = new TrafficClass<Packet>();
+  /* Set the first one (0) to be default */
+  trafficClassLow -> SetIsDefault(true);
+  trafficClassHigh -> SetPriorityLevel(1);
 
   /* Create the filters. They'll just be hardcoded for now */
   // Filter* filter1 = new Filter();
@@ -190,11 +190,11 @@ uint32_t Spq<Item>::Classify(Ptr<Item> p)
     // std::cout << "Classify\n";
 	Ptr<Packet> packet = (Ptr<Packet>)p;
   for (int i = 0; i < (int) this -> q_class.size(); i++) {
-    std::cout << "Classifying\n";
-    std:: cout << this->q_class[i] << "\n";
+    // std::cout << "Classifying\n";
+    // std:: cout << this->q_class[i] << "\n";
       // std::cout << "checking matches\n";
       if (this->q_class[i]->match(packet)) {
-          std::cout << "Match\n";
+          // std::cout << "Match\n";
           return i;
       }
   }

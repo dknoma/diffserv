@@ -71,14 +71,13 @@ DestinationPortNumberFilter::Match (Ptr<ns3::Packet> packet)
   // std::cout << "THIS IS A DESTINATION PORT FILTER ELEMENT\n";
   Ptr<ns3::Packet> copy = packet->Copy();
   if (copy->GetSize() == 0)
-  {
-    std::cout << "empty packet...\n";
-    return false;
-  }
-
-    // Remove p2pHeader
-  packet->Print(std::cout);
-  std::cout << "\n";
+    {
+      std::cout << "empty packet...\n";
+      return false;
+    }
+  // Remove pppHeader
+  // packet->Print(std::cout);
+  // std::cout << "\n";
   PppHeader removedp2pHeader;
   copy->RemoveHeader(removedp2pHeader);
 
@@ -93,8 +92,8 @@ DestinationPortNumberFilter::Match (Ptr<ns3::Packet> packet)
   // std::cout << "checking address...\n";
   uint32_t destPort = header.GetDestinationPort();
   bool matches = destPort == value;
-  std::cout << "dest port: " << destPort << " vs value: " << value << "\tmatches: "<< matches << "\n";
-  return destPort == value;
+  // std::cout << "dest port: " << destPort << " vs value: " << value << "\tmatches: "<< matches << "\n";
+  return matches;
 }
 
 void 

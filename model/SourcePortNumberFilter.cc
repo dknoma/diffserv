@@ -68,21 +68,17 @@ bool
 SourcePortNumberFilter::Match (Ptr<ns3::Packet> packet)
 {
   //NS_LOG_FUNCTION (this << packet);
-  std::cout << "THIS IS A SOURCE PORT FILTER ELEMENT << \n";
+  // std::cout << "THIS IS A SOURCE PORT FILTER ELEMENT << \n";
   Ptr<ns3::Packet> copy = packet->Copy();
   if (copy->GetSize() == 0)
-  {
-    std::cout << "empty packet...\n";
-    return false;
-  }
+    {
+      std::cout << "empty packet...\n";
+      return false;
+    }
 
 /* One of these headers should match eventually */
-
-
-
-
-  packet->Print(std::cout);
-  std::cout << "\n";
+  // packet->Print(std::cout);
+  // std::cout << "\n";
       // Remove p2pHeader
   PppHeader removedp2pHeader;
   copy->RemoveHeader(removedp2pHeader);
@@ -90,7 +86,6 @@ SourcePortNumberFilter::Match (Ptr<ns3::Packet> packet)
   UdpHeader header;
   // std::cout << "peeking header...\n";
   copy->PeekHeader(header); // Get the IPv4 header from the packet
-
 
   // Remove Ipv4Header
   Ipv4Header removedHeader;
@@ -103,8 +98,8 @@ SourcePortNumberFilter::Match (Ptr<ns3::Packet> packet)
   // std::cout << "checking address...\n";
   uint32_t srcPort = header.GetSourcePort();
   bool matches = srcPort == value;
-  std::cout << "src port: " << srcPort << " vs value: " << value << "\tmatches: "<< matches << "\n";
-  return srcPort == value;
+  // std::cout << "src port: " << srcPort << " vs value: " << value << "\tmatches: "<< matches << "\n";
+  return matches;
 }
 
 void 

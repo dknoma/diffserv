@@ -75,17 +75,17 @@ Filter::Filter (std::vector<FilterElement*> filterElements)
 bool 
 Filter::Match (Ptr<ns3::Packet> packet)
 {
-  std::cout << "match called" << "\n";
+  // std::cout << "match called" << "\n";
   NS_LOG_FUNCTION (this << packet);
   // TODO: for each element in vector, check its virtual match against the corresponding packet element
   // Elements ^/AND each other. HAS to satisfy ALL filter elements for this specific filter
   bool matching = true;
   // for (std::vector<FilterElement*>::iterator i = elements.begin(); i != elements.end(); ++i)
-  std::cout << "filter element size: " << elements.size() << "\n";
+  // std::cout << "filter element size: " << elements.size() << "\n";
   for(uint32_t i = 0; i < elements.size(); i++)
   {
-    std::cout << "filter element[" << i << "]\n";
-    std::cout << "Elements" << elements.at(i) << "\n";
+    // std::cout << "filter element[" << i << "]\n";
+    // std::cout << "Elements" << elements.at(i) << "\n";
 
     //SourcePortNumberFilter* sp = new SourcePortNumberFilter();
     //std::cout << "Sp1: " << sp << "\n";
@@ -96,7 +96,7 @@ Filter::Match (Ptr<ns3::Packet> packet)
 
     matching = matching && elements.at(i) -> Match(packet); // Matches at least one of the filter elements
   }
-  std::cout << matching << std::endl;
+  // std::cout << matching << std::endl;
   return matching;
 }
 
